@@ -1,0 +1,33 @@
+{
+  "model_name": "Irrigation Urgency & Action (Model 2)",
+  "dataset": "Synthetic Agronomic Bootstrap Dataset",
+  "trained_on": "synthetic_bootstrap",
+  "total_samples": 1800,
+  "features": [
+    "days_since_rain",
+    "days_since_last_irrigation",
+    "soil_encoded",
+    "forecast_rain_probability",
+    "forecast_rain_amount",
+    "crop_encoded"
+  ],
+  "feature_importances": {
+    "days_since_rain": 0.10857913154120293,
+    "days_since_last_irrigation": 0.1913293157498908,
+    "soil_encoded": 0.16597055814044281,
+    "forecast_rain_probability": 0.20639548544191502,
+    "forecast_rain_amount": 0.11733427963992844,
+    "crop_encoded": 0.21039122948662006
+  },
+  "accuracy": 0.975,
+  "precision": 0.9758509727012467,
+  "recall": 0.975,
+  "target_classes": [
+    "Delay Irrigation::Low",
+    "Irrigate::High",
+    "Irrigate::Medium",
+    "Monitor::Low",
+    "Monitor::Medium",
+    "No Action Needed::Low"
+  ]
+}

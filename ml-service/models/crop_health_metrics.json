@@ -1,0 +1,170 @@
+{
+  "model_name": "AI Crop Health Classifier (Model 3)",
+  "base_model": "MobileNetV2 (Pretrained ImageNet weights, frozen backbone)",
+  "dataset": "PlantVillage Dataset (Authentic Public Leaf Disease Repository)",
+  "trained_on": "real_dataset",
+  "total_samples": 270,
+  "train_samples": 216,
+  "test_samples": 54,
+  "classes_count": 6,
+  "classes": [
+    {
+      "index": 0,
+      "key": "Tomato___healthy",
+      "display_name": "Tomato - Healthy",
+      "crop": "Tomato",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "general_guidance": "Foliage exhibits vigorous chlorophyll coloration and healthy leaf morphology. Continue standard balanced irrigation and nutrient management."
+    },
+    {
+      "index": 1,
+      "key": "Tomato___Early_blight",
+      "display_name": "Tomato - Early Blight",
+      "crop": "Tomato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "general_guidance": "This appears to be a fungal foliar condition (Alternaria solani). Consider consulting a local agricultural extension officer for suitable fungal management practices and avoid overhead watering."
+    },
+    {
+      "index": 2,
+      "key": "Potato___healthy",
+      "display_name": "Potato - Healthy",
+      "crop": "Potato",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "general_guidance": "Foliage appears normal and vigorous with no visible necrotic lesions. Maintain consistent soil moisture and regular crop scouting."
+    },
+    {
+      "index": 3,
+      "key": "Potato___Early_blight",
+      "display_name": "Potato - Early Blight",
+      "crop": "Potato",
+      "condition": "Early Blight",
+      "is_healthy": false,
+      "general_guidance": "This appears to be a fungal foliar condition. Consider consulting a local agricultural specialist regarding field hygiene, removal of affected foliage, and certified biological or chemical controls."
+    },
+    {
+      "index": 4,
+      "key": "Corn_(maize)___healthy",
+      "display_name": "Corn (Maize) - Healthy",
+      "crop": "Corn",
+      "condition": "Healthy",
+      "is_healthy": true,
+      "general_guidance": "Maize leaf blades demonstrate healthy venation and uniform green tone. Continue scheduled soil fertilization and moisture monitoring."
+    },
+    {
+      "index": 5,
+      "key": "Corn_(maize)___Common_rust_",
+      "display_name": "Corn (Maize) - Common Rust",
+      "crop": "Corn",
+      "condition": "Common Rust",
+      "is_healthy": false,
+      "general_guidance": "This appears to be a fungal rust condition (Puccinia sorghi). Consider consulting a local agricultural officer for certified rust-resistant crop management and field drainage recommendations."
+    }
+  ],
+  "accuracy": 0.9814814814814815,
+  "precision": 0.9833333333333334,
+  "recall": 0.9814814814814815,
+  "confusion_matrix": [
+    [
+      9,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      8,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      9,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      9,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      9,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      9
+    ]
+  ],
+  "classification_report": {
+    "Tomato - Healthy": {
+      "precision": 0.9,
+      "recall": 1.0,
+      "f1-score": 0.9473684210526315,
+      "support": 9.0
+    },
+    "Tomato - Early Blight": {
+      "precision": 1.0,
+      "recall": 0.8888888888888888,
+      "f1-score": 0.9411764705882353,
+      "support": 9.0
+    },
+    "Potato - Healthy": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 9.0
+    },
+    "Potato - Early Blight": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 9.0
+    },
+    "Corn (Maize) - Healthy": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 9.0
+    },
+    "Corn (Maize) - Common Rust": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 9.0
+    },
+    "accuracy": 0.9814814814814815,
+    "macro avg": {
+      "precision": 0.9833333333333334,
+      "recall": 0.9814814814814815,
+      "f1-score": 0.9814241486068113,
+      "support": 54.0
+    },
+    "weighted avg": {
+      "precision": 0.9833333333333334,
+      "recall": 0.9814814814814815,
+      "f1-score": 0.9814241486068112,
+      "support": 54.0
+    }
+  }
+}

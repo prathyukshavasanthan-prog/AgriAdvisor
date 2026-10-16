@@ -2,31 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
-  CloudRain, 
-  Leaf, 
+  Sprout, 
   Droplets, 
-  TrendingUp, 
+  Leaf, 
   Map, 
+  AlertTriangle, 
+  TrendingUp, 
   Languages, 
-  ArrowRight, 
+  FlaskConical, 
+  Cpu, 
   CheckCircle2, 
-  Sparkles,
-  ChevronRight
+  ArrowRight, 
+  KeyRound, 
+  Sparkles
 } from 'lucide-react';
 import { NavbarLanding } from '../components/NavbarLanding.js';
 
-// Safe image fallback helper
-const handleImageFallback = (e: React.SyntheticEvent<HTMLImageElement, Event>, fallbackUrl: string) => {
-  const target = e.target as HTMLImageElement;
-  if (target.src !== fallbackUrl) {
-    target.src = fallbackUrl;
-  }
-};
-
 export const LandingPage: React.FC = () => {
   const { t } = useTranslation();
-
-  const fallbackFarmland = "https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80";
 
   return (
     <div className="min-h-screen bg-[#FBFBF9] text-[#14251B] flex flex-col font-sans selection:bg-[#2D6A4F] selection:text-white">
@@ -34,360 +27,335 @@ export const LandingPage: React.FC = () => {
       <NavbarLanding />
 
       <main className="flex-1">
-        {/* HERO SECTION (Part 7: Headline & Subtext Directly ON TOP of Farmland Background) */}
-        <section className="relative px-4 sm:px-6 lg:px-8 py-20 sm:py-28 max-w-7xl mx-auto">
-          <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-[#D8D5C5] min-h-[560px] sm:min-h-[620px] flex items-center justify-center">
-            {/* Background Farmland Image */}
-            <img
-              src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1920&q=85"
-              alt={t('hero_img_alt')}
-              onError={(e) => handleImageFallback(e, fallbackFarmland)}
-              className="absolute inset-0 w-full h-full object-cover object-center transform scale-105"
-              loading="eager"
-            />
+        {/* HERO SECTION — Simple, Focused, Deeply Related to Project */}
+        <section className="relative px-4 sm:px-6 lg:px-8 pt-10 sm:pt-14 pb-12 sm:pb-16 max-w-7xl mx-auto">
+          <div className="relative rounded-3xl bg-gradient-to-br from-[#1E4620] via-[#173a19] to-[#0f2711] text-white p-6 sm:p-12 lg:p-14 overflow-hidden shadow-xl border border-[#2D6A4F]/30">
+            {/* Subtle background decorative shapes */}
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none" />
 
-            {/* Gradient Overlay for Crisp Text Contrast */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#14251B]/85 via-[#14251B]/75 to-[#14251B]/95" />
-
-            {/* Hero Content Sits Directly ON TOP of the Farmland Image */}
-            <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 py-12">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 text-amber-300 backdrop-blur-md text-xs sm:text-sm font-semibold mb-6 border border-white/20 shadow-sm">
+            <div className="relative z-10 max-w-4xl mx-auto text-center space-y-6">
+              {/* Project Badge */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 text-amber-300 border border-white/15 text-xs sm:text-sm font-semibold backdrop-blur-sm shadow-xs">
                 <Sparkles className="w-4 h-4 text-amber-400" />
                 <span>{t('hero_badge')}</span>
+                <span className="text-white/40">•</span>
+                <span className="text-emerald-200">Level 3 System</span>
               </div>
 
-              {/* Bold 2-Line Headline */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white leading-[1.15] sm:leading-[1.12]">
+              {/* Bold 2-Line Project Title */}
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
                 <span className="block text-emerald-300 drop-shadow-sm">{t('hero_headline_1')}</span>
-                <span className="block mt-2 text-white drop-shadow-sm">{t('hero_headline_2')}</span>
+                <span className="block text-white drop-shadow-sm mt-1">{t('hero_headline_2')}</span>
               </h1>
 
-              {/* Subtext */}
-              <p className="mt-6 text-base sm:text-xl text-stone-200 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow">
+              {/* Clear, Project-Specific Subtext */}
+              <p className="text-base sm:text-lg text-stone-200 max-w-3xl mx-auto font-normal leading-relaxed">
                 {t('hero_subtext')}
               </p>
 
-              {/* CTA Buttons */}
-              <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+              {/* Pre-Seeded Live Demo Access Callout */}
+              <div className="max-w-xl mx-auto bg-black/30 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/15 text-left text-xs sm:text-sm shadow-inner">
+                <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-white/10 text-amber-300 font-bold">
+                  <div className="flex items-center gap-2">
+                    <KeyRound className="w-4 h-4 text-amber-400" />
+                    <span>Live Demo Evaluator Credentials:</span>
+                  </div>
+                  <span className="bg-amber-400/20 text-amber-200 text-[11px] px-2 py-0.5 rounded-full font-mono font-bold">
+                    PRE-SEEDED
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2.5 font-mono text-stone-200">
+                  <div>
+                    <span className="text-stone-400 text-xs">Phone:</span> <strong className="text-white">+919876543210</strong>
+                  </div>
+                  <div>
+                    <span className="text-stone-400 text-xs">Password:</span> <strong className="text-white">password123</strong>
+                  </div>
+                </div>
+                <p className="mt-2 text-[11px] text-emerald-200/80 font-sans">
+                  Includes 3 active farms (Bangalore, Indore, Jalandhar) + health history + community disease outbreak alerts.
+                </p>
+              </div>
+
+              {/* CTAs */}
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-2">
                 <Link
-                  to="/register"
+                  to="/login"
                   id="hero-get-started-btn"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-3.5 rounded-xl text-base sm:text-lg font-bold text-[#14251B] bg-amber-400 hover:bg-amber-300 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all group"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl text-base font-bold text-[#14251B] bg-amber-400 hover:bg-amber-300 shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all group"
                 >
                   <span>{t('hero_cta_start')}</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
-                <a
-                  href="#capabilities"
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/30 backdrop-blur-sm transition-all"
+                <Link
+                  to="/register"
+                  id="hero-register-btn"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-white/10 hover:bg-white/20 border border-white/25 backdrop-blur-sm transition-all"
                 >
-                  <span>{t('hero_cta_secondary')}</span>
-                  <ChevronRight className="w-4 h-4" />
-                </a>
+                  <span>{t('nav_register')}</span>
+                </Link>
               </div>
             </div>
           </div>
         </section>
 
-        {/* STATS ROW: 4 Stat Blocks */}
-        <section id="features" className="py-12 bg-white border-y border-[#E7E5D8]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8">
-              {/* Stat 1 */}
-              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] text-center hover:border-[#1E4620]/30 transition-colors">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E4620] tracking-tight">
-                  {t('stat_farmers_count')}
-                </div>
-                <div className="mt-2 text-sm sm:text-base font-semibold text-[#445B4B]">
-                  {t('stat_farmers_label')}
-                </div>
-              </div>
-
-              {/* Stat 2 */}
-              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] text-center hover:border-[#1E4620]/30 transition-colors">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E4620] tracking-tight">
-                  {t('stat_accuracy_count')}
-                </div>
-                <div className="mt-2 text-sm sm:text-base font-semibold text-[#445B4B]">
-                  {t('stat_accuracy_label')}
-                </div>
-              </div>
-
-              {/* Stat 3 */}
-              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] text-center hover:border-[#1E4620]/30 transition-colors">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E4620] tracking-tight">
-                  {t('stat_water_count')}
-                </div>
-                <div className="mt-2 text-sm sm:text-base font-semibold text-[#445B4B]">
-                  {t('stat_water_label')}
-                </div>
-              </div>
-
-              {/* Stat 4 */}
-              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] text-center hover:border-[#1E4620]/30 transition-colors">
-                <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E4620] tracking-tight">
-                  {t('stat_yield_count')}
-                </div>
-                <div className="mt-2 text-sm sm:text-base font-semibold text-[#445B4B]">
-                  {t('stat_yield_label')}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* CONTENT GRID SECTION: Capability Cards */}
-        <section id="capabilities" className="py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
+        {/* 6 CORE ENGINEERING MODULES (Deeply Related to Project, No Generic Stock Photos) */}
+        <section id="capabilities" className="py-12 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
             <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2D6A4F] bg-[#EBF5EE] px-3.5 py-1.5 rounded-full border border-[#2D6A4F]/20">
               {t('grid_badge')}
             </span>
-            <h2 className="mt-4 text-3xl sm:text-4xl font-extrabold text-[#14251B] tracking-tight">
+            <h2 className="mt-3 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#14251B] tracking-tight">
               {t('grid_heading')}
             </h2>
-            <p className="mt-3 text-base sm:text-lg text-[#394D40]">
+            <p className="mt-2 text-sm sm:text-base text-[#394D40]">
               {t('grid_subheading')}
             </p>
           </div>
 
-          {/* 3-Column Responsive Grid with Reliable Images */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Card 1: Weather Insights */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1534088568595-a066f410bcda?auto=format&fit=crop&w=800&q=80"
-                  alt="Weather Insights"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <CloudRain className="w-5 h-5 text-amber-300" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Module 1: AI Crop Recommendation Engine */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#1E4620] flex items-center justify-center">
+                    <Sprout className="w-5 h-5 text-[#1E4620]" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono">
+                    Random Forest (99.55%)
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  {t('card_crop_title')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Trained on authentic ICAR agricultural soil data (2,200 samples, 22 crops). Maps soil N-P-K, pH, temperature, and rainfall to optimal staple and cash crops.
+                </p>
               </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_weather_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_weather_desc')}
-                  </p>
-                </div>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>Dataset: Authentic Agricultural</span>
+                <span className="text-emerald-700 font-bold">Model 1</span>
               </div>
             </div>
 
-            {/* Card 2: AI Crop Monitoring */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1592417817098-8f3d69104a49?auto=format&fit=crop&w=800&q=80"
-                  alt="AI Crop Monitoring"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <Leaf className="w-5 h-5 text-emerald-300" />
+            {/* Module 2: Precision Irrigation Advisory */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center">
+                    <Droplets className="w-5 h-5 text-sky-700" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-mono">
+                    FAO-56 Soil Physics
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  {t('card_irrigation_title')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Calculates watering urgency by combining soil percolation capacity, dry period intervals, and forward 24-hour Open-Meteo precipitation forecasts.
+                </p>
               </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_crop_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_crop_desc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3: Precision Irrigation */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=800&q=80"
-                  alt="Precision Irrigation"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <Droplets className="w-5 h-5 text-sky-300" />
-                </div>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_irrigation_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_irrigation_desc')}
-                  </p>
-                </div>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>Model: Synthetic Bootstrap</span>
+                <span className="text-sky-700 font-bold">Model 2</span>
               </div>
             </div>
 
-            {/* Card 4: Live APMC Market Trends */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=800&q=80"
-                  alt="Live Mandi Trends"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <TrendingUp className="w-5 h-5 text-amber-300" />
+            {/* Module 3: Foliar Disease Diagnostic Classifier */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+                    <Leaf className="w-5 h-5 text-amber-700" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono">
+                    MobileNetV2 (98.15%)
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  Crop Foliar Disease Diagnosis
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Deep learning transfer model trained on PlantVillage benchmark. Diagnoses early blight, late blight, and rust from phone photos with safe cultural guidance.
+                </p>
               </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_market_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_market_desc')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Card 5: GIS Satellite Mapping */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=800&q=80"
-                  alt="GIS Satellite Mapping"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <Map className="w-5 h-5 text-emerald-300" />
-                </div>
-              </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_gis_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_gis_desc')}
-                  </p>
-                </div>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>Low-confidence Fallback Guard</span>
+                <span className="text-amber-700 font-bold">Model 3</span>
               </div>
             </div>
 
-            {/* Card 6: Native Multilingual First */}
-            <div className="bg-white rounded-2xl border border-[#E7E5D8] overflow-hidden shadow-sm hover:shadow-md transition-shadow group flex flex-col">
-              <div className="aspect-[16/10] overflow-hidden bg-stone-100 relative">
-                <img
-                  src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=800&q=80"
-                  alt="10 Indian Languages"
-                  onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 left-3 bg-[#1E4620] text-white p-2 rounded-xl shadow">
-                  <Languages className="w-5 h-5 text-amber-300" />
+            {/* Module 4: Soil Health Card & ICAR Benchmarks */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center">
+                    <FlaskConical className="w-5 h-5 text-[#1E4620]" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-stone-100 text-stone-700 border border-stone-300 font-mono">
+                    Govt. SHC Dual-Path
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  Soil Health Card Integration
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Dual-path workflow: cultivators can enter laboratory Soil Health Card numbers directly or select their regional soil category with ICAR benchmark defaults.
+                </p>
               </div>
-              <div className="p-6 flex-1 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#14251B]">
-                    {t('card_multilingual_title')}
-                  </h3>
-                  <p className="mt-2 text-sm text-[#4D6553] leading-relaxed">
-                    {t('card_multilingual_desc')}
-                  </p>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>6 Indian Soil Textures</span>
+                <span className="text-[#1E4620] font-bold">Module 4</span>
+              </div>
+            </div>
+
+            {/* Module 5: Leaflet GIS & Polygon Boundary Drawer */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-800 flex items-center justify-center">
+                    <Map className="w-5 h-5 text-purple-700" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-800 border border-purple-200 font-mono">
+                    Leaflet + Turf.js
+                  </span>
                 </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  {t('card_gis_title')}
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Interactive OpenStreetMap & Esri satellite basemaps. Tap vertices to draw plot boundaries, auto-calculate acreage, and view dual-channel status pins.
+                </p>
+              </div>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>Zero Paid API Key Billing</span>
+                <span className="text-purple-700 font-bold">Module 5</span>
+              </div>
+            </div>
+
+            {/* Module 6: Geospatial Community Outbreak Alerts */}
+            <div className="bg-white rounded-2xl border border-[#E7E5D8] p-6 shadow-sm hover:shadow-md hover:border-[#1E4620]/30 transition-all flex flex-col justify-between space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="w-10 h-10 rounded-xl bg-rose-100 text-rose-800 flex items-center justify-center">
+                    <AlertTriangle className="w-5 h-5 text-rose-700" />
+                  </div>
+                  <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-800 border border-rose-200 font-mono">
+                    MongoDB $geoNear 10km
+                  </span>
+                </div>
+                <h3 className="text-lg font-bold text-[#14251B]">
+                  Community Disease Surveillance
+                </h3>
+                <p className="text-xs sm:text-sm text-[#4D6553] leading-relaxed">
+                  Automatically flags neighboring outbreaks for matching crops using 2dsphere indexes, with a ~500m geodesic offset to strictly preserve farmer privacy.
+                </p>
+              </div>
+              <div className="pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-500 font-medium">
+                <span>Privacy-Preserving Geodesic</span>
+                <span className="text-rose-700 font-bold">Extension</span>
               </div>
             </div>
           </div>
         </section>
 
-        {/* EDITORIAL TEXT BLOCK */}
-        <section id="mission" className="py-20 bg-[#F4F2E9] border-y border-[#E7E5D8]">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2D6A4F] bg-white px-4 py-1.5 rounded-full border border-[#D8D5C5]">
-              {t('editorial_badge')}
-            </span>
-            <h2 className="mt-6 text-2xl sm:text-3xl lg:text-4xl font-extrabold text-[#14251B] leading-tight">
-              {t('editorial_heading')}
+        {/* SYSTEM HIGHLIGHTS: APMC Mandis, 10 Languages & Microservices */}
+        <section id="features" className="py-12 bg-white border-y border-[#E7E5D8]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Feature 1 */}
+              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] space-y-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-amber-700" />
+                </div>
+                <h4 className="text-base font-bold text-[#14251B]">
+                  {t('card_market_title')}
+                </h4>
+                <p className="text-xs sm:text-sm text-[#445B4B] leading-relaxed">
+                  14-day APMC mandi price history across major commodities with Haversine distances to 11 authentic markets and +10% seller guidance notifications.
+                </p>
+              </div>
+
+              {/* Feature 2 */}
+              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] space-y-3">
+                <div className="w-9 h-9 rounded-xl bg-[#1E4620]/10 text-[#1E4620] flex items-center justify-center">
+                  <Languages className="w-5 h-5 text-[#1E4620]" />
+                </div>
+                <h4 className="text-base font-bold text-[#14251B]">
+                  {t('card_multilingual_title')}
+                </h4>
+                <p className="text-xs sm:text-sm text-[#445B4B] leading-relaxed">
+                  100% key parity (470 keys) across 10 Indian scripts (`ta`, `en`, `hi`, `te`, `kn`, `ml`, `mr`, `bn`, `gu`, `pa`) with Web Speech audio narration.
+                </p>
+              </div>
+
+              {/* Feature 3 */}
+              <div className="p-6 rounded-2xl bg-[#F9F8F3] border border-[#E7E5D8] space-y-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-800 flex items-center justify-center">
+                  <Cpu className="w-5 h-5 text-emerald-800" />
+                </div>
+                <h4 className="text-base font-bold text-[#14251B]">
+                  Decoupled Microservice Architecture
+                </h4>
+                <p className="text-xs sm:text-sm text-[#445B4B] leading-relaxed">
+                  Production stack: React/Vite (5273), Express/Node.js (5900), FastAPI ML microservice (8000), MongoDB with 2dsphere indexes, and Redis cache.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* MISSION & ENGINEERING INTEGRITY BLOCK */}
+        <section id="mission" className="py-14 sm:py-16 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-[#2D6A4F] bg-white px-4 py-1.5 rounded-full border border-[#D8D5C5] shadow-2xs">
+            {t('editorial_badge')}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#14251B] leading-tight">
+            {t('editorial_heading')}
+          </h2>
+          <div className="space-y-3 text-sm sm:text-base text-[#314636] leading-relaxed max-w-2xl mx-auto">
+            <p>{t('editorial_p1')}</p>
+            <p>{t('editorial_p2')}</p>
+          </div>
+          <div className="pt-4 flex items-center justify-center gap-3 text-xs sm:text-sm font-bold text-[#1E4620]">
+            <CheckCircle2 className="w-4 h-4 text-[#2D6A4F]" />
+            <span>{t('editorial_quote')}</span>
+          </div>
+        </section>
+
+        {/* DIRECT DEMO CTA */}
+        <section className="pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+          <div className="bg-[#1E4620] text-white rounded-3xl p-8 sm:p-12 shadow-xl relative overflow-hidden text-center space-y-6">
+            <h2 className="text-2xl sm:text-4xl font-black text-white">
+              {t('closing_heading')}
             </h2>
-            <div className="mt-6 space-y-4 text-sm sm:text-base text-[#314636] leading-relaxed">
-              <p>{t('editorial_p1')}</p>
-              <p>{t('editorial_p2')}</p>
+            <p className="text-sm sm:text-base text-emerald-100 max-w-xl mx-auto">
+              Launch the 5-minute evaluation walkthrough or inspect the pre-seeded demo farms right away.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center gap-2.5 text-xs sm:text-sm font-semibold text-emerald-100 pt-2">
+              <span className="bg-emerald-800/80 px-3.5 py-1.5 rounded-full border border-emerald-600/40">
+                ✓ {t('closing_chip_1')}
+              </span>
+              <span className="bg-emerald-800/80 px-3.5 py-1.5 rounded-full border border-emerald-600/40">
+                ✓ 3 AI/ML Models
+              </span>
+              <span className="bg-emerald-800/80 px-3.5 py-1.5 rounded-full border border-emerald-600/40">
+                ✓ GIS Polygon Boundaries
+              </span>
             </div>
-            <div className="mt-8 pt-8 border-t border-[#DCD9CB] flex items-center justify-center gap-3 text-sm font-semibold text-[#1E4620]">
-              <CheckCircle2 className="w-5 h-5 text-[#2D6A4F]" />
-              <span>{t('editorial_quote')}</span>
-            </div>
-          </div>
-        </section>
 
-        {/* CLOSING "GET STARTED NOW" SECTION */}
-        <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-          <div className="bg-[#1E4620] text-white rounded-3xl p-8 sm:p-14 shadow-2xl relative overflow-hidden">
-            <div className="relative z-10 max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                {t('closing_heading')}
-              </h2>
-              <p className="mt-4 text-sm sm:text-base text-emerald-100 max-w-xl mx-auto font-normal">
-                {t('closing_subtext')}
-              </p>
-
-              {/* Small Thumbnail Images Row */}
-              <div className="mt-8 flex items-center justify-center gap-3 sm:gap-4 flex-wrap">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-300 shadow-md">
-                  <img
-                    src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=400&q=80"
-                    alt="Farmer thumbnail 1"
-                    onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden border-2 border-white shadow-lg transform scale-105">
-                  <img
-                    src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?auto=format&fit=crop&w=400&q=80"
-                    alt="Crop harvest thumbnail 2"
-                    onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-amber-300 shadow-md">
-                  <img
-                    src="https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?auto=format&fit=crop&w=400&q=80"
-                    alt="Healthy seedling thumbnail 3"
-                    onError={(e) => handleImageFallback(e, fallbackFarmland)}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              </div>
-
-              {/* Chips */}
-              <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5 text-xs sm:text-sm font-semibold text-emerald-100">
-                <span className="bg-emerald-800/80 px-3 py-1 rounded-full border border-emerald-600/40">
-                  ✓ {t('closing_chip_1')}
-                </span>
-                <span className="bg-emerald-800/80 px-3 py-1 rounded-full border border-emerald-600/40">
-                  ✓ {t('closing_chip_2')}
-                </span>
-                <span className="bg-emerald-800/80 px-3 py-1 rounded-full border border-emerald-600/40">
-                  ✓ {t('closing_chip_3')}
-                </span>
-              </div>
-
-              {/* Primary CTA Button */}
-              <div className="mt-8">
-                <Link
-                  to="/register"
-                  id="closing-get-started-btn"
-                  className="inline-flex items-center gap-3 px-8 py-3.5 rounded-xl text-base sm:text-lg font-bold text-[#14251B] bg-amber-400 hover:bg-amber-300 shadow-lg hover:shadow-xl transition-all group"
-                >
-                  <span>{t('closing_cta')}</span>
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </div>
+            <div className="pt-4">
+              <Link
+                to="/login"
+                id="closing-get-started-btn"
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-base font-bold text-[#14251B] bg-amber-400 hover:bg-amber-300 shadow-md hover:shadow-lg transition-all"
+              >
+                <span>{t('closing_cta')}</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </section>
@@ -409,3 +377,5 @@ export const LandingPage: React.FC = () => {
     </div>
   );
 };
+
+export default LandingPage;

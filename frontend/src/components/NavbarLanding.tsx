@@ -18,7 +18,7 @@ export const NavbarLanding: React.FC = () => {
             <Sprout className="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.2]" />
           </div>
           <div className="flex flex-col min-w-0">
-            <span className="text-lg sm:text-xl font-bold tracking-tight text-[#14251B] font-sans truncate">
+            <span className="text-base sm:text-xl font-bold tracking-tight text-[#14251B] font-sans whitespace-nowrap">
               {t('brand_name')}
             </span>
             <span className="hidden sm:block text-xs font-medium text-[#4D6553] tracking-wide truncate">
@@ -27,27 +27,11 @@ export const NavbarLanding: React.FC = () => {
           </div>
         </Link>
 
-        {/* Center: Horizontal menu links */}
-        <nav className="hidden md:flex items-center gap-8">
-          <a
-            href="#features"
-            className="text-sm font-semibold text-[#2D3A30] hover:text-[#1E4620] transition-colors py-1"
-          >
-            {t('nav_features')}
-          </a>
-          <a
-            href="#capabilities"
-            className="text-sm font-semibold text-[#2D3A30] hover:text-[#1E4620] transition-colors py-1"
-          >
-            {t('nav_capabilities')}
-          </a>
-          <a
-            href="#mission"
-            className="text-sm font-semibold text-[#2D3A30] hover:text-[#1E4620] transition-colors py-1"
-          >
-            {t('nav_editorial')}
-          </a>
-        </nav>
+        {/* Center: Live System Status Tag */}
+        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#EBF5EE] text-[#1E4620] border border-[#2D6A4F]/20 text-xs font-bold shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span>Level 3 Agricultural Intelligence System</span>
+        </div>
 
         {/* Right: Language Switcher, Login and Sign Up buttons */}
         <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">

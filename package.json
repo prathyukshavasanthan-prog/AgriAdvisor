@@ -1,0 +1,16 @@
+{
+  "name": "agriadvisor-root",
+  "private": true,
+  "scripts": {
+    "seed:demo": "node scripts/seedDemoScenario.cjs",
+    "reset:demo": "node scripts/resetDemoScenario.cjs",
+    "check-i18n": "node scripts/verifyTranslations.cjs",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "docker:up": "docker compose up --build",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.12.0"
+  }
+}

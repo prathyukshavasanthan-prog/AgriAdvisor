@@ -1,18 +1,23 @@
 import fs from 'fs';
 import path from 'path';
+import process from 'process';
 import { redis } from '../config/redis.js';
 import { MarketPrice } from '../models/MarketPrice.js';
 import { MANDI_MARKETS, IMandiMarket, calculateHaversineDistanceKm } from '../data/mandiMarkets.js';
 
+// In Node.js CommonJS (existing module system), __dirname is provided at runtime by the module wrapper.
+declare const __dirname: string;
+
 // Resolve fallback CSV path across development (src/) and production (dist/ or container root)
 function getFallbackCsvPath(): string {
+  const dir = typeof __dirname !== 'undefined' ? __dirname : process.cwd();
   const candidatePaths = [
     path.join(process.cwd(), 'src', 'data', 'agmarknet_mandi_prices.csv'),
     path.join(process.cwd(), 'dist', 'data', 'agmarknet_mandi_prices.csv'),
     path.join(process.cwd(), 'data', 'agmarknet_mandi_prices.csv'),
     path.join(process.cwd(), 'backend', 'src', 'data', 'agmarknet_mandi_prices.csv'),
-    path.join(__dirname, '..', 'data', 'agmarknet_mandi_prices.csv'),
-    path.join(__dirname, 'data', 'agmarknet_mandi_prices.csv'),
+    path.join(dir, '..', 'data', 'agmarknet_mandi_prices.csv'),
+    path.join(dir, 'data', 'agmarknet_mandi_prices.csv'),
   ];
   for (const p of candidatePaths) {
     if (fs.existsSync(p)) return p;
@@ -70,13 +75,23 @@ export async function seedMarketPricesIfEmpty(): Promise<void> {
 
     console.log('[Market Service] Initializing MongoDB with historical APMC Mandi dataset snapshots from:', csvPath);
     const content = fs.readFileSync(csvPath, 'utf-8');
-    const lines = content.split('\n').filter((line) => line.trim().length > 0);
+    const lines: string[] = content.split('\n').filter((line: string) => line.trim().length > 0);
 
-    const headers = lines[0].split(',').map((h) => h.trim());
-    const records = [];
+    const headers: string[] = lines[0].split(',').map((h: string) => h.trim());
+    const records: Array<{
+      crop_type: string;
+      market: string;
+      state: string;
+      price: number;
+      min_price: number;
+      max_price: number;
+      price_date: Date;
+      source: 'agmarknet_dataset';
+      created_at: Date;
+    }> = [];
 
     for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(',').map((p) => p.trim());
+      const parts: string[] = lines[i].split(',').map((p: string) => p.trim());
       if (parts.length < headers.length) continue;
 
       const cropType = parts[0].toLowerCase();

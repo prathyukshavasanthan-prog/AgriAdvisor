@@ -1,3 +1,4 @@
+import process from 'process';
 import Redis from 'ioredis';
 
 const redisUrl = process.env.REDIS_URL;

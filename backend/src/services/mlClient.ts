@@ -1,3 +1,4 @@
+import process from 'process';
 import { CropPredictionLog, IrrigationPredictionLog } from '../models/PredictionLogs.js';
 import { Types } from 'mongoose';
 

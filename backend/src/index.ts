@@ -1,6 +1,6 @@
+import 'dotenv/config';
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import farmRoutes, { getFarmIrrigationRecommendation, handleGetCropLifecycle } from './routes/farmRoutes.js';
@@ -13,14 +13,32 @@ import { seedMarketPricesIfEmpty } from './services/marketService.js';
 import { migrateExistingFarmLocations } from './services/outbreakService.js';
 import { migrateExistingFarmsPhase1 } from './models/Farm.js';
 
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 5900;
+const PORT = Number(process.env.PORT) || 5900;
+
+// Frontend Origin Configuration via environment variable
+const frontendUrlEnv = process.env.FRONTEND_URL;
+const allowedOrigins = frontendUrlEnv
+  ? frontendUrlEnv.split(',').map((u) => u.trim().replace(/\/+$/, ''))
+  : ['*'];
 
 // Middleware
 app.use(cors({
-  origin: '*', // Allow all origins for dev/docker testing
+  origin: (origin, callback) => {
+    // Allow non-browser requests (e.g. mobile apps, curl, server-to-server) or requests with no origin
+    if (!origin || allowedOrigins.includes('*')) {
+      return callback(null, true);
+    }
+    const cleanOrigin = origin.replace(/\/+$/, '');
+    if (allowedOrigins.includes(cleanOrigin) || allowedOrigins.some((o) => cleanOrigin.startsWith(o))) {
+      return callback(null, true);
+    }
+    // Also allow in non-production environments
+    if (process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: '15mb' }));

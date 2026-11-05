@@ -4,7 +4,7 @@
   "description": "AgriAdvisor Backend API with Node.js, Express, TypeScript, and MongoDB",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs=require('fs'); fs.mkdirSync('dist/data',{recursive:true}); fs.copyFileSync('src/data/agmarknet_mandi_prices.csv','dist/data/agmarknet_mandi_prices.csv');\"",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts"
   },

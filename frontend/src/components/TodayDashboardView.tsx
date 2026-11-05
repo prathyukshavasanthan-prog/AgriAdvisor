@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { SpeechListenButton } from './SpeechListenButton.js';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
 interface TodayDashboardViewProps {
   farms: any[];
   user: any;
@@ -67,7 +69,7 @@ export const TodayDashboardView: React.FC<TodayDashboardViewProps> = ({
     if (nextState) {
       setIrrigationSubmitting(true);
       try {
-        await fetch(`/api/farms/${currentFarm._id}/watered-today`, {
+        await fetch(`${API_BASE_URL}/api/farms/${currentFarm._id}/watered-today`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -91,7 +93,7 @@ export const TodayDashboardView: React.FC<TodayDashboardViewProps> = ({
     setCropHealthStatus(status);
     setHealthSubmitting(true);
     try {
-      await fetch(`/api/farms/${currentFarm._id}/crop-health`, {
+      await fetch(`${API_BASE_URL}/api/farms/${currentFarm._id}/crop-health`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

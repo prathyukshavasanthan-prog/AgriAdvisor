@@ -85,8 +85,23 @@ if os.path.exists(crop_health_head_path) and os.path.exists(crop_health_metrics_
     with open(crop_health_metrics_path, "r") as f:
         crop_health_metrics = json.load(f)
     
-    # Initialize frozen MobileNetV2 feature extractor
+    # Pre-populate torch hub cache so execution never needs external internet for weights
+    try:
+        torch_hub_checkpoints = os.path.join(torch.hub.get_dir(), "checkpoints")
+        local_pth = os.path.join(MODELS_DIR, "mobilenet_v2-7ebf99e0.pth")
+        if os.path.exists(local_pth):
+            os.makedirs(torch_hub_checkpoints, exist_ok=True)
+            target_pth = os.path.join(torch_hub_checkpoints, "mobilenet_v2-7ebf99e0.pth")
+            if not os.path.exists(target_pth):
+                import shutil
+                shutil.copyfile(local_pth, target_pth)
+    except Exception as e:
+        print(f"[WARNING] Could not pre-cache torch model weights: {e}")
+
+    # Initialize frozen MobileNetV2 feature extractor explicitly on CPU
+    device = torch.device("cpu")
     mobilenet = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
+    mobilenet.to(device)
     mobilenet.eval()
     mobilenet_extractor = mobilenet.features
     mobilenet_avgpool = torch.nn.AdaptiveAvgPool2d((1, 1))
@@ -233,11 +248,11 @@ def process_and_predict_leaf_image(img: Image.Image) -> CropHealthPredictRespons
     img_np = np.array(img_rgb)
     std_color = float(np.std(img_np))
     
-    # Extract features using frozen MobileNetV2
+    # Extract features using frozen MobileNetV2 on CPU
     with torch.no_grad():
-        tensor = image_transforms(img_rgb).unsqueeze(0)
+        tensor = image_transforms(img_rgb).unsqueeze(0).to(torch.device("cpu"))
         feats = mobilenet_extractor(tensor)
-        feats = mobilenet_avgpool(feats).flatten().numpy().reshape(1, -1)
+        feats = mobilenet_avgpool(feats).flatten().cpu().numpy().reshape(1, -1)
         
     probabilities = crop_health_head.predict_proba(feats)[0]
     best_idx = int(np.argmax(probabilities))
@@ -663,3 +678,10 @@ async def predict_crop_health_upload(file: UploadFile = File(...)):
         raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to process uploaded file: {str(e)}")
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
+

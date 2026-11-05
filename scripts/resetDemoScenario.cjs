@@ -6,15 +6,18 @@
  */
 
 const http = require('http');
+const https = require('https');
 
-const API_BASE_URL = process.env.API_URL || 'http://127.0.0.1:5900';
+const API_BASE_URL = (process.env.API_URL || process.env.API_BASE_URL || 'http://127.0.0.1:5900').replace(/\/+$/, '');
 
 function request(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {
     const u = new URL(url);
+    const client = u.protocol === 'https:' ? https : http;
     const reqOptions = {
+      protocol: u.protocol,
       hostname: u.hostname,
-      port: u.port,
+      port: u.port || (u.protocol === 'https:' ? 443 : 80),
       path: u.pathname + u.search,
       method: options.method || 'GET',
       headers: {
@@ -23,7 +26,7 @@ function request(url, options = {}, body = null) {
       },
     };
 
-    const req = http.request(reqOptions, (res) => {
+    const req = client.request(reqOptions, (res) => {
       let data = '';
       res.on('data', (chunk) => (data += chunk));
       res.on('end', () => {

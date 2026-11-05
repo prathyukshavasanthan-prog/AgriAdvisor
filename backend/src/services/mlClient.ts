@@ -1,7 +1,9 @@
 import { CropPredictionLog, IrrigationPredictionLog } from '../models/PredictionLogs.js';
 import { Types } from 'mongoose';
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const getMlServiceUrl = (): string => {
+  return (process.env.ML_SERVICE_URL || 'http://localhost:8000').replace(/\/+$/, '');
+};
 
 export interface CropPredictionItem {
   crop: string;
@@ -92,7 +94,7 @@ export const predictCrop = async (
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-    const res = await fetch(`${ML_SERVICE_URL}/predict/crop`, {
+    const res = await fetch(`${getMlServiceUrl()}/predict/crop`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -187,7 +189,7 @@ export const predictIrrigation = async (
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4000);
 
-    const res = await fetch(`${ML_SERVICE_URL}/predict/irrigation`, {
+    const res = await fetch(`${getMlServiceUrl()}/predict/irrigation`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -312,7 +314,7 @@ export const predictCropHealth = async (
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 12000);
 
-    const res = await fetch(`${ML_SERVICE_URL}/predict/crop-health`, {
+    const res = await fetch(`${getMlServiceUrl()}/predict/crop-health`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

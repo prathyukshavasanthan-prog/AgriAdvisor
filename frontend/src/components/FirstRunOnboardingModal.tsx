@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { SOIL_TYPE_BENCHMARKS, LAND_TYPES } from './FarmFormModal.js';
 
+const API_BASE_URL = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
 interface FirstRunOnboardingModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -123,7 +125,7 @@ export const FirstRunOnboardingModal: React.FC<FirstRunOnboardingModalProps> = (
         }
       };
 
-      const res = await fetch('/api/farms', {
+      const res = await fetch(`${API_BASE_URL}/api/farms`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

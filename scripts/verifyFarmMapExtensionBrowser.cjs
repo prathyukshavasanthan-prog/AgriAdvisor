@@ -4,7 +4,7 @@ const path = require('path');
 const http = require('http');
 
 const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
-const artifactDir = 'C:/Users/Hp/.gemini/antigravity-ide/brain/fc3481d3-1d6d-410d-a227-39d7e62656c8';
+const artifactDir = 'C:/Users/Hp/.gemini/antigravity-ide/brain/d5fc1972-4afe-4761-8790-cb71462699c0';
 
 function request(url, options = {}, body = null) {
   return new Promise((resolve, reject) => {

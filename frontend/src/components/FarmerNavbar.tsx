@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
-  Home, 
   CloudSun, 
   TrendingUp, 
   User, 
@@ -10,7 +9,8 @@ import {
   Sprout, 
   Sparkles,
   CheckCircle2,
-  Mic
+  Mic,
+  Calendar
 } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector.js';
 import { FarmerProfileModal } from './FarmerProfileModal.js';
@@ -44,9 +44,9 @@ export const FarmerNavbar: React.FC = () => {
     activeTab = 'market';
   }
 
-  // Exact Requested Nav Order: Overview, Weather Advisory, Market Prices, My Farms, AI Predictions
+  // Exact Requested Nav Order: Today, Weather Advisory, Market Prices, My Farms, AI Predictions
   const navTabs = [
-    { id: 'overview', label: t('dash_nav_overview'), path: '/dashboard', icon: Home },
+    { id: 'overview', label: t('dash_nav_today', 'Today'), path: '/dashboard', icon: Calendar },
     { id: 'weather', label: t('dash_nav_weather'), path: '/dashboard/weather', icon: CloudSun },
     { id: 'market', label: t('dash_nav_market'), path: '/dashboard/market', icon: TrendingUp },
     { id: 'farms', label: t('dash_nav_farms'), path: '/dashboard/farms', icon: Sprout },
@@ -125,8 +125,8 @@ export const FarmerNavbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Tab Navigation: Exactly 3 Tabs (Overview, Weather Advisory, Market Prices) */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Tab Navigation: Visible on desktop (mobile uses bottom tab bar) */}
+        <div className="hidden md:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center gap-2 sm:gap-4 py-2 overflow-x-auto" aria-label="Farmer Sub-navigation">
             {navTabs.map((tab) => {
               const Icon = tab.icon;

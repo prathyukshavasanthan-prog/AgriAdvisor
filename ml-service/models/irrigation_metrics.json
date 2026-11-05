@@ -1,33 +1,71 @@
 {
-  "model_name": "Irrigation Urgency & Action (Model 2)",
-  "dataset": "Synthetic Agronomic Bootstrap Dataset",
-  "trained_on": "synthetic_bootstrap",
-  "total_samples": 1800,
-  "features": [
-    "days_since_rain",
-    "days_since_last_irrigation",
-    "soil_encoded",
-    "forecast_rain_probability",
-    "forecast_rain_amount",
-    "crop_encoded"
+  "model_name": "FAO-56 Precision Irrigation Decision Engine (Model 2)",
+  "dataset": "FAO-56 Daily Soil Water Balance on 3-Year Real Historical Weather (30 Indian Locations)",
+  "dataset_type": "FAO-56 Daily Soil Water Balance Simulation (Real Weather)",
+  "classifier": "RandomForestClassifier",
+  "trained_on": "trained on an agronomic simulation with real historical weather",
+  "held_out_locations": [
+    "nagpur",
+    "mandya",
+    "patna",
+    "rajkot",
+    "jodhpur",
+    "cuttack"
+  ],
+  "total_samples": 226800,
+  "train_samples": 181440,
+  "test_samples": 45360,
+  "accuracy": 0.9994047619047619,
+  "macro_f1": 0.9991929240592061,
+  "precision": 0.9993879436669356,
+  "recall": 0.9989991362312188,
+  "macro_precision": 0.9993879436669356,
+  "macro_recall": 0.9989991362312188,
+  "classes": [
+    "Hold (rain coming)",
+    "Irrigate in 2-3 days",
+    "Irrigate now",
+    "Not needed"
+  ],
+  "confusion_matrix": [
+    [
+      6399,
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      8472,
+      0,
+      4
+    ],
+    [
+      0,
+      6,
+      3039,
+      2
+    ],
+    [
+      0,
+      12,
+      0,
+      27423
+    ]
   ],
   "feature_importances": {
-    "days_since_rain": 0.10857913154120293,
-    "days_since_last_irrigation": 0.1913293157498908,
-    "soil_encoded": 0.16597055814044281,
-    "forecast_rain_probability": 0.20639548544191502,
-    "forecast_rain_amount": 0.11733427963992844,
-    "crop_encoded": 0.21039122948662006
-  },
-  "accuracy": 0.975,
-  "precision": 0.9758509727012467,
-  "recall": 0.975,
-  "target_classes": [
-    "Delay Irrigation::Low",
-    "Irrigate::High",
-    "Irrigate::Medium",
-    "Monitor::Low",
-    "Monitor::Medium",
-    "No Action Needed::Low"
-  ]
+    "soil_water_depletion_pct": 0.4981,
+    "awhc": 0.0061,
+    "crop_kc": 0.0128,
+    "root_depth_m": 0.0183,
+    "irrigation_efficiency": 0.0007,
+    "days_since_rain": 0.041,
+    "days_since_last_irrigation": 0.0318,
+    "forecast_rain_next_48h": 0.3291,
+    "temp_avg_48h": 0.0115,
+    "et0_avg_48h": 0.0365,
+    "soil_type_code": 0.0089,
+    "crop_type_code": 0.005,
+    "method_code": 0.0003
+  }
 }

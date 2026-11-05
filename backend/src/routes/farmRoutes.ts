@@ -4,6 +4,7 @@ import { Farm } from '../models/Farm.js';
 import { Crop } from '../models/Crop.js';
 import { CropHealthLog } from '../models/CropHealthLog.js';
 import { getWeatherData } from '../services/weatherService.js';
+import { getSeasonalClimatology } from '../services/historicalWeatherService.js';
 import { predictCrop, predictIrrigation, predictCropHealth } from '../services/mlClient.js';
 import { getSoilDefaults } from '../services/soilDefaults.js';
 import {
@@ -23,6 +24,8 @@ import {
   calculateCropLifecycle,
   getSowingAdvisory,
 } from '../services/cropLifecycleService.js';
+import { IrrigationLog } from '../models/IrrigationLog.js';
+import { calculateSoilWaterDepletion, logWateredToday } from '../services/irrigationService.js';
 import { Types } from 'mongoose';
 
 const router = Router();
@@ -267,26 +270,25 @@ router.post('/recommend-crop', async (req: AuthenticatedRequest, res: Response):
       soil_ph = soil_ph ?? defaults.ph;
     }
 
-    let temperature = parseResult.data.temperature;
-    let humidity = parseResult.data.humidity;
-    let rainfall = parseResult.data.rainfall;
+    const refDate = (req.body as any).simulated_date || req.query.date
+      ? new Date(String((req.body as any).simulated_date || req.query.date))
+      : new Date();
 
-    // If coordinates are provided and weather features not explicitly supplied, fetch real local weather
-    if (latitude !== undefined && longitude !== undefined && (temperature === undefined || humidity === undefined)) {
+    // Phase 2: Do NOT feed today's forecast. Fetch 5-year seasonal climatology from Open-Meteo Archive / 30-day cache
+    let climatology: any = null;
+    if (latitude !== undefined && longitude !== undefined) {
       try {
-        const weather = await getWeatherData(latitude, longitude);
-        temperature = temperature ?? weather.temperature;
-        humidity = humidity ?? weather.humidity;
-        rainfall = rainfall ?? (weather.precipitation > 0 ? weather.precipitation * 10 : 85);
-      } catch (wErr) {
-        console.warn('[Farm Route] Weather fetch for crop recommendation skipped:', wErr);
+        climatology = await getSeasonalClimatology(latitude, longitude, refDate);
+      } catch (cErr) {
+        console.warn('[Farm Route] Historical seasonal climatology lookup error:', cErr);
       }
     }
 
-    // Default sensible climate if still undefined
-    temperature = temperature ?? 26.5;
-    humidity = humidity ?? 71.0;
-    rainfall = rainfall ?? 110.0;
+    let temperature = parseResult.data.temperature ?? climatology?.temperature ?? 26.5;
+    let humidity = parseResult.data.humidity ?? climatology?.humidity ?? 71.0;
+    let rainfall = parseResult.data.rainfall ?? climatology?.rainfall ?? 110.0;
+    const land_type = parseResult.data.land_type;
+    const water_source = parseResult.data.water_source;
 
     const prediction = await predictCrop({
       N: soil_n,
@@ -296,6 +298,9 @@ router.post('/recommend-crop', async (req: AuthenticatedRequest, res: Response):
       humidity,
       ph: soil_ph,
       rainfall,
+      land_type,
+      water_source,
+      season: climatology?.season,
       userId: req.user?._id,
     });
 
@@ -310,9 +315,6 @@ router.post('/recommend-crop', async (req: AuthenticatedRequest, res: Response):
     }
 
     // Sowing Window & Land Preparation Advisory (Module 6)
-    const refDate = (req.body as any).simulated_date || req.query.date
-      ? new Date(String((req.body as any).simulated_date || req.query.date))
-      : new Date();
     const sowingAdvisory = getSowingAdvisory(prediction.recommended_crop || 'rice', refDate);
     const alternativesAdvisory = (prediction.alternatives || []).map((alt: string) =>
       getSowingAdvisory(alt, refDate)
@@ -324,8 +326,28 @@ router.post('/recommend-crop', async (req: AuthenticatedRequest, res: Response):
       recommended_crop: prediction.recommended_crop,
       confidence: prediction.confidence,
       confidence_score: prediction.confidence_score,
+      likelihood: prediction.likelihood,
+      reasons: prediction.reasons,
+      top_3: prediction.top_3,
       alternatives: prediction.alternatives,
       trained_on: prediction.trained_on,
+      filtered_for_land: prediction.filtered_for_land ?? false,
+      filter_reason: prediction.filter_reason ?? null,
+      unsupported_crops: prediction.unsupported_crops ?? [],
+      needs_soil_health_card: prediction.needs_soil_health_card ?? false,
+      inputs_used: {
+        soil_type: soil_type || 'loamy',
+        season: climatology?.season || 'kharif',
+        season_label: climatology?.season_label || 'Kharif (Monsoon)',
+        season_months: climatology?.season_months || 'June – October',
+        temperature_avg: temperature,
+        humidity_avg: humidity,
+        rainfall_seasonal: rainfall,
+        land_type: land_type || 'irrigated',
+        water_source: water_source || 'borewell',
+        years_analyzed: climatology?.years_analyzed || 5,
+        source: climatology?.source || 'agro_climatic_normals',
+      },
       climate_snapshot: { temperature, humidity, rainfall },
       sowing_advisory: sowingAdvisory,
       alternatives_advisory: alternativesAdvisory,
@@ -343,7 +365,7 @@ router.post('/recommend-crop', async (req: AuthenticatedRequest, res: Response):
 
 /**
  * GET /api/farms/:farmId/recommendation (or mapped from /api/recommendations/:farmId)
- * Predict irrigation urgency and action using Model 2 with real-time weather
+ * Predict irrigation urgency and action using Model 2 (FAO-56 Soil Water Balance)
  */
 export const getFarmIrrigationRecommendation = async (
   req: AuthenticatedRequest,
@@ -370,17 +392,27 @@ export const getFarmIrrigationRecommendation = async (
     // Fetch current weather via Open-Meteo + Redis caching
     const weather = await getWeatherData(farm.latitude, farm.longitude, farm._id);
 
-    // Domain estimation: if recent precipitation recorded, days_since_rain is 0; else 4
-    const daysSinceRain = weather.precipitation > 0.5 ? 0 : 4;
-    const daysSinceLastIrrigation = 5; // standard interval benchmark
+    // Calculate FAO-56 14-day soil moisture balance and depletion
+    const depletion = await calculateSoilWaterDepletion(farm, latestCrop, weather);
 
     const prediction = await predictIrrigation({
-      days_since_rain: daysSinceRain,
-      days_since_last_irrigation: daysSinceLastIrrigation,
+      days_since_rain: depletion.days_since_rain,
+      days_since_last_irrigation: depletion.days_since_last_irrigation,
       soil_type: farm.soil_type,
       forecast_rain_probability: weather.forecast_rain_probability,
       forecast_rain_amount: weather.forecast_rain_amount,
+      forecast_rain_next_48h: weather.forecast_rain_amount,
+      soil_water_depletion_pct: depletion.soil_water_depletion_pct,
+      awhc: depletion.awhc,
+      crop_kc: depletion.crop_kc,
+      root_depth_m: depletion.root_depth_m,
+      irrigation_efficiency: depletion.irrigation_efficiency,
+      temperature: weather.temperature,
+      et0: depletion.et0_daily_avg,
       crop_type: cropType,
+      irrigation_method: farm.irrigation_method,
+      land_type: farm.land_type,
+      water_source: farm.water_source,
       userId: req.user?._id,
       farmId: farm._id,
     });
@@ -403,8 +435,20 @@ export const getFarmIrrigationRecommendation = async (
       return;
     }
 
-    const actionKey = `action_${prediction.recommended_action!.toLowerCase().replace(/\s+/g, '_')}`;
-    const urgencyKey = `urgency_${prediction.urgency_level!.toLowerCase()}`;
+    // Normalize action key for i18n
+    const rawAction = prediction.recommended_action || 'Not needed';
+    let actionKey = 'action_not_needed';
+    if (rawAction.toLowerCase().includes('hold')) {
+      actionKey = 'action_hold_rain_coming';
+    } else if (rawAction.toLowerCase().includes('2-3') || rawAction.toLowerCase().includes('2_3')) {
+      actionKey = 'action_irrigate_in_2_3_days';
+    } else if (rawAction.toLowerCase().includes('irrigate now') || rawAction.toLowerCase() === 'irrigate') {
+      actionKey = 'action_irrigate_now';
+    } else if (rawAction.toLowerCase().includes('conserve')) {
+      actionKey = 'action_conserve_soil_moisture';
+    }
+
+    const urgencyKey = `ai_urgency_${(prediction.urgency_level || 'low').toLowerCase()}`;
 
     res.status(200).json({
       success: true,
@@ -413,6 +457,13 @@ export const getFarmIrrigationRecommendation = async (
       urgency_level: prediction.urgency_level,
       confidence: prediction.confidence,
       confidence_score: prediction.confidence_score,
+      soil_water_depletion_pct: prediction.soil_water_depletion_pct ?? depletion.soil_water_depletion_pct,
+      taw_mm: depletion.taw_mm,
+      raw_mm: depletion.raw_mm,
+      last_irrigation_date: depletion.last_irrigation_date,
+      recent_irrigation_count: depletion.recent_irrigation_count,
+      is_rainfed_no_water: prediction.is_rainfed_no_water ?? false,
+      rain_based_guidance: prediction.rain_based_guidance ?? null,
       top_reasons: prediction.top_reasons,
       trained_on: prediction.trained_on,
       messageKey: actionKey,
@@ -439,6 +490,106 @@ export const getFarmIrrigationRecommendation = async (
 };
 
 router.get('/:farmId/recommendation', getFarmIrrigationRecommendation);
+
+/**
+ * POST /api/farms/:farmId/watered-today
+ * Record that cultivator watered today (one-tap action)
+ */
+router.post('/:farmId/watered-today', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { farmId } = req.params;
+    if (!Types.ObjectId.isValid(farmId)) {
+      res.status(400).json({ success: false, message: 'Invalid farm ID' });
+      return;
+    }
+
+    const farm = await Farm.findOne({ _id: farmId, user: req.user?._id });
+    if (!farm) {
+      res.status(404).json({ success: false, message: 'Farm not found' });
+      return;
+    }
+
+    const log = await logWateredToday(
+      farm._id,
+      req.user?._id!,
+      req.body.method,
+      req.body.amount_mm,
+      req.body.notes
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Watering logged successfully',
+      messageKey: 'btn_watered_today_success',
+      log,
+    });
+  } catch (error: any) {
+    console.error('[Farm Route] Error recording watered today:', error);
+    res.status(500).json({ success: false, message: 'Failed to record watering', error: error.message });
+  }
+});
+
+router.post('/:farmId/irrigation-log', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { farmId } = req.params;
+    if (!Types.ObjectId.isValid(farmId)) {
+      res.status(400).json({ success: false, message: 'Invalid farm ID' });
+      return;
+    }
+
+    const farm = await Farm.findOne({ _id: farmId, user: req.user?._id });
+    if (!farm) {
+      res.status(404).json({ success: false, message: 'Farm not found' });
+      return;
+    }
+
+    const log = await logWateredToday(
+      farm._id,
+      req.user?._id!,
+      req.body.method,
+      req.body.amount_mm,
+      req.body.notes
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Irrigation log created successfully',
+      messageKey: 'btn_watered_today_success',
+      log,
+    });
+  } catch (error: any) {
+    console.error('[Farm Route] Error creating irrigation log:', error);
+    res.status(500).json({ success: false, message: 'Failed to create irrigation log', error: error.message });
+  }
+});
+
+/**
+ * GET /api/farms/:farmId/irrigation-logs
+ * Fetch recent irrigation logs for farm
+ */
+router.get('/:farmId/irrigation-logs', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  try {
+    const { farmId } = req.params;
+    if (!Types.ObjectId.isValid(farmId)) {
+      res.status(400).json({ success: false, message: 'Invalid farm ID' });
+      return;
+    }
+
+    const logs = await IrrigationLog.find({ farm_id: farmId, user_id: req.user?._id })
+      .sort({ date: -1 })
+      .limit(30)
+      .lean();
+
+    res.status(200).json({
+      success: true,
+      count: logs.length,
+      logs,
+    });
+  } catch (error: any) {
+    console.error('[Farm Route] Error retrieving irrigation logs:', error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve irrigation logs' });
+  }
+});
 
 // ==========================================
 // 2. FARMS CRUD ENDPOINTS
@@ -945,7 +1096,7 @@ const handleDiagnoseCropHealth = async (req: AuthenticatedRequest, res: Response
     // If is_healthy === true -> "Healthy"
     // If is_healthy === false -> "Concerning"
     let status: 'Healthy' | 'Okay' | 'Concerning' = 'Concerning';
-    if (prediction.low_confidence) {
+    if (prediction.low_confidence || prediction.is_unclear) {
       status = 'Okay';
     } else if (prediction.is_healthy === true) {
       status = 'Healthy';

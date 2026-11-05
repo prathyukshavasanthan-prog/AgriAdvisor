@@ -15,6 +15,40 @@ body {
   min-height: 100vh;
 }
 
+/* Regional Indian Script Typography & Line Height optimizations (Prevents clipping and overflow) */
+[lang="ta"], :lang(ta) {
+  font-family: 'Noto Sans Tamil', 'Inter', system-ui, sans-serif;
+  line-height: 1.65;
+}
+[lang="hi"], :lang(hi), [lang="mr"], :lang(mr) {
+  font-family: 'Noto Sans Devanagari', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+}
+[lang="te"], :lang(te) {
+  font-family: 'Noto Sans Telugu', 'Inter', system-ui, sans-serif;
+  line-height: 1.65;
+}
+[lang="kn"], :lang(kn) {
+  font-family: 'Noto Sans Kannada', 'Inter', system-ui, sans-serif;
+  line-height: 1.65;
+}
+[lang="ml"], :lang(ml) {
+  font-family: 'Noto Sans Malayalam', 'Inter', system-ui, sans-serif;
+  line-height: 1.7;
+}
+[lang="bn"], :lang(bn) {
+  font-family: 'Noto Sans Bengali', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+}
+[lang="gu"], :lang(gu) {
+  font-family: 'Noto Sans Gujarati', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+}
+[lang="pa"], :lang(pa) {
+  font-family: 'Noto Sans Gurmukhi', 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+}
+
 /* Ensure minimum touch target sizes for farmer usability */
 button, input, select, a {
   touch-action: manipulation;

@@ -1,152 +1,161 @@
 # AgriAdvisor — 5-Minute Live Demo & Viva Walkthrough Script
 
-This document provides a structured, timed 5-minute walkthrough designed for evaluation and viva examiners. For each screen, it provides the exact navigation step, the visual proof to point out, and one or two clear spoken sentences. At the end, it provides concise, high-impact answers to likely examiner technical questions.
+This document provides a timed, structured 5-minute live demonstration script for academic evaluators, university viva committees, and project examiners. Each step details the exact navigation action, visual evidence to highlight, and concise spoken dialogue. The second half provides direct, technically rigorous answers to likely viva examiner questions.
 
 ---
 
-## ⏱️ Walkthrough Sequence (5 Minutes)
+## ⏱️ Live Demo Walkthrough Sequence (5 Minutes)
 
 ### 1. Landing Page (`/`)
 - **Action:** Open `http://localhost:5273` in your browser.
-- **Visuals:** Unified agricultural design language (`#FBFBF9`), hero banner, feature grid, and top language selector.
+- **Visuals:** Unified agricultural design language (`#FBFBF9`), hero banner, feature tiles, and regional language selector.
 - **Spoken Script:**
   > *"AgriAdvisor is an intelligent decision-support system built for Indian farmers, bridging government workflows like the Soil Health Card with localized AI agronomy across 10 regional Indian languages."*
 
 ---
 
-### 2. Register & Login (`/login`)
-- **Action:** Click **"Login"** in the top navigation. Enter demo credentials:
+### 2. Login (`/login`)
+- **Action:** Click **"Login"**. Enter demo credentials:
   - Phone: `+919876543210`
   - Password: `password123`
-- **Visuals:** JWT-authenticated session with instant redirection to the farmer dashboard.
+- **Visuals:** JWT session established, instant redirection to the cultivator dashboard.
 - **Spoken Script:**
-  > *"Farmers log in securely via their mobile number. If they are in the field, state is saved and their chosen native language is restored automatically."*
+  > *"Farmers log in securely via mobile OTP or password. The system remembers their active plot, location, and preferred regional language across sessions."*
 
 ---
 
-### 3. Dashboard Overview (`/dashboard`)
-- **Action:** Point to the 3 farm cards and the Community Outbreak alert banner at the top.
+### 3. Today Dashboard (`/dashboard/overview`)
+- **Action:** Point out the **"Today"** view: single big card with 3 action tiles (Irrigation, Crop Health Check, Leaf Photo Check), Done check-in toggles, "Why?" buttons, and the collapsed "More" accordion.
 - **Visuals:**
-  - Disease Outbreak Banner: *"Disease reported 3.8 km from your tomato farm (Kaveri Green Valley)"* with `[Demo data]` badge.
-  - Quick Farm Cards: Bangalore (Healthy/Optimal), Indore (Okay/Warning), and Jalandhar (Critical Streak Alert).
+  - Tile 1 (Irrigation): "Water plot for 35 min today", High Priority badge, Listen TTS button, Done tick toggle (`#btn-done-irrigation`).
+  - Tile 2 (Crop Health): "Daily crop health check: all good", Done toggle.
+  - "Why?" Modal: Technical agronomic reasons explained in concise sentences $\le 12$ words.
+  - "More" Accordion (`#btn-toggle-more`): Keeps non-essential weather metrics and plot cards hidden to avoid visual clutter.
 - **Spoken Script:**
-  > *"The dashboard gives the cultivator immediate situational awareness: weather conditions, active plot statuses, and automated community disease warnings matching their specific crop within a 10-kilometer radius."*
+  > *"We redesigned the home screen into an action-first 'Today' view with at most three priority tiles under eight words. AI technical explanations are housed behind 'Why?' buttons so farmers aren't overwhelmed with paragraphs of text."*
 
 ---
 
-### 4. My Farms & Soil Card Input (`/dashboard/farms`)
-- **Action:** Navigate to **"My Farms"** and click **"+ Add New Farm"** (or view plot details).
-- **Visuals:** Dual-path toggle at the top: *"I have a Soil Health Card"* vs *"I don't have one"*.
+### 4. My Farms & Soil Inputs (`/dashboard/farms`)
+- **Action:** Navigate to **"My Farms"**. Show registered plots with soil swatches and land types. Click **"+ Add New Farm"** to show Phase 1 inputs.
+- **Visuals:**
+  - 14 Soil Types with authentic color swatches (no stock photos): Alluvial, Black (Regur), Red, Laterite, Sandy, Sandy loam, Loamy, Silty, Clay loam, Clay, Saline/Alkaline, Peaty/Marshy, Desert/Arid, Hill/Forest.
+  - "Not sure" 3-tap deterministic identifier (Sticky when wet? Drains fast? Color?).
+  - Land Types (Irrigated, Rainfed, Lowland/paddy, Upland, Terraced hill, Raised beds, Polyhouse, Orchard/plantation).
+  - Area calculation with unit switcher (acres, hectares, cents).
 - **Spoken Script:**
-  > *"We solve the soil input problem by respecting real-world farmer reality: if they have an official Soil Health Card, they enter lab numbers; if not, they select their soil type, and our system maps verified ICAR regional nutrient benchmarks."*
+  > *"We respect field reality: farmers can input Soil Health Card lab numbers or pick their soil type from 14 color swatches. A 3-tap question helper deterministically identifies soil type, pre-filling verified ICAR and FAO-56 hydrological parameters."*
 
 ---
 
 ### 5. GIS Farm Map (`/dashboard/map`)
-- **Action:** Navigate to **"Farm Map"**. Toggle between **Street (OpenStreetMap)** and **Satellite (Esri World Imagery)**. Turn on layers: **Farm Status**, **Rain Forecast**, **Nearby Mandis**, and **Disease Alerts**. Click **"Locate on Map"** on a nearby mandi.
+- **Action:** Click **"Farm Map (GIS)"**. Toggle between **Street (OpenStreetMap)** and **Satellite (Esri World Imagery)**. Turn on layers: **Farm Status**, **Nearby Mandis**, and **Disease Alerts**.
 - **Visuals:**
-  - Polygon outlines and centroid status pins (never color alone: color + shape icons).
-  - Haversine distances to authentic APMC mandis with "Best Price Nearby" star badge.
-  - Red-orange 10 km disease outbreak circles with safe category-level guidance.
+  - Drawn polygon boundary with Turf.js automatic acreage computation.
+  - Color + icon status markers (never color alone).
+  - APMC mandis with Haversine travel distances and "Locate on Map" fly-to.
+  - 10 km community disease alert buffer rings with anonymized ~500m privacy offsets.
 - **Spoken Script:**
-  > *"Our GIS map operates with zero paid API keys using OpenStreetMap and Esri satellite tiles. Farmers can draw their plot boundary, view next-24-hour rainfall risks, compare live mandi prices with travel distance, and inspect nearby community pest alerts."*
+  > *"Our GIS map operates with zero paid API keys using OpenStreetMap and Esri satellite tiles. Farmers can draw their field boundaries, view nearby APMC mandis with travel distances, and see community pest warnings within 10 kilometers."*
 
 ---
 
 ### 6. AI Predictions (`/dashboard/ai-predictions`)
-- **Action:** Navigate to **"AI Predictions"**. Switch between farms using the plot selector pills.
+- **Action:** Open **"AI Predictions"**. Review Model 1 (Crop Recommendation) and Model 2 (Irrigation Urgency).
 - **Visuals:**
-  - Model 1 (Crop Recommendation): Primary crop (e.g. *Rice* or *Papaya*), confidence %, and viable alternatives, labeled `real_dataset`.
-  - Model 2 (Irrigation Advisory): Recommended action (*"Apply Irrigation Now"* / *"Delay Irrigation"*), urgency badge, top agronomic reasons, labeled `synthetic_bootstrap`.
+  - **Inputs Used Panel:** Soil type, season (Kharif/Rabi/Zaid), and 5-year average seasonal rainfall/temperature from Open-Meteo Archive API (cached 30 days).
+  - **Model 1 Top 3 Crops:** Plain-words likelihood (`Very Likely`, `Likely`, `Possible`), 2 agronomic reasons per crop, visible `"Filtered for your land"` badge.
+  - **Model 2 Irrigation Urgency:** Action (`Irrigate now`, `Irrigate in 2-3 days`, `Not needed`, `Hold (rain coming)`), root-zone depletion %, and one-tap "I watered today" button.
 - **Spoken Script:**
-  > *"Our predictions module separates crop planning from daily irrigation. Model 1 recommends suitable crops using real ICAR agronomic data, while Model 2 calculates irrigation urgency from soil water balance physics and live rainfall forecasts."*
+  > *"Critically, Model 1 never uses today's weather forecast; it fetches 5-year seasonal historical climatology from the Open-Meteo Archive API. Model 2 implements a full FAO-56 daily soil water balance trained on 3 years of real weather across 30 Indian agricultural locations."*
 
 ---
 
-### 7. Crop Health Monitoring (`/dashboard/farms/:id`)
-- **Action:** Open a farm, scroll to Crop Health, and show the two tabs: **"Quick Check-in"** (manual) and **"AI Photo Diagnosis"** (neural net). Show the unified timeline below.
+### 7. Crop Health & Leaf Photo Diagnosis (`/dashboard/farms/:id#leaf-diagnosis`)
+- **Action:** Open farm details, click **"AI Photo Diagnosis"**. Point out the Photo Tips bar with icons. Test a sample authentic leaf (`#sample-leaf-1`), then test an unclear image.
 - **Visuals:**
-  - Upload sample healthy leaf (`sample_healthy_tomato.jpg`) -> *Tomato Healthy (98.7%)*.
-  - Upload blight leaf (`sample_diseased_tomato_blight.jpg`) -> *Early Blight (95.6%)* with safe cultural guidance.
-  - Consecutive concerning check-ins trigger the yellow warning banner.
+  - Photo Tips Bar: Leaf (one leaf), Sun (daylight), ZoomIn (close-up).
+  - Authentic Leaf Result: Top 3 conditions with plain-words likelihood (`Very likely`, `Likely`, `Possible`), cultural care guidance, and honest PlantVillage disclosure note.
+  - Non-Leaf Rejection: Uploading a wall, noise, or checkerboard image returns `"unclear"` with advice to upload a clear daylight photo.
+  - Zero chemical pesticide brand names or doses anywhere.
 - **Spoken Script:**
-  > *"Farmers can log manual field checks or upload a photo to our MobileNetV2 classifier, which achieves 98.15% test accuracy. Consecutive concerning reports automatically trigger community disease alerts to warn neighboring growers."*
+  > *"Our MobileNetV2 foliar classifier is trained on 20 balanced PlantVillage classes achieving 96.11% test accuracy. To prevent false alarms, it uses confidence and Shannon entropy thresholds to reject non-leaf photos as 'unclear', while prescribing strictly cultural care and extension officer consultation."*
 
 ---
 
 ### 8. Market Prices (`/dashboard/market`)
 - **Action:** Navigate to **"Market Prices"**.
-- **Visuals:** 14-day SVG trend sparklines, price change indicators (+10.9%), and the high-rise seller banner (*"Prices are up — consider selling soon"*). Source labeled: `agmarknet_dataset` ("Representative Mandi Data").
+- **Visuals:** 14-day price trend sparklines, price change badges (+10.9%), high-rise selling advice banner (*"Prices are up — consider selling soon"*). Source labeled: `agmarknet_dataset` ("Representative Mandi Data").
 - **Spoken Script:**
-  > *"We display 14-day mandi price trends across major commodities. If 7-day price gains exceed 10%, an automated selling alert guides the cultivator on when to harvest and sell."*
+  > *"Cultivators can monitor 14-day APMC mandi price trends. Automated alerts highlight significant weekly price surges, helping farmers determine the optimal market window."*
 
 ---
 
 ### 9. Crop Lifecycle & Sowing Advisory
-- **Action:** In farm details or AI Predictions, view the **Crop Growth Stage & Milestone Progress** card.
+- **Action:** View the active crop lifecycle milestone progress card in Farm Details.
 - **Visuals:**
-  - Progress bar showing current milestone (e.g., *Vegetative Growth*, *Flowering*, *Harvest Ready*).
-  - In-season vs Out-of-season advisory (e.g., Chickpea in Rabi vs Rice out-of-season warning).
-  - ICAR pre-sowing land preparation guidance note.
+  - Growth stage progress bar calculated from days since sowing against ICAR baselines.
+  - In-season vs Out-of-season warning badge (e.g. Rice sown in Rabi flags a Kharif warning).
+  - ICAR pre-sowing land preparation guidelines.
 - **Spoken Script:**
-  > *"The lifecycle tracker calculates growth milestones from the farm's sowing date, warns farmers if a crop is planted outside its optimal agro-climatic window, and provides ICAR land preparation guidelines."*
+  > *"The lifecycle engine tracks phenological progress from the sowing date, warns farmers when a crop is planted outside its optimal agro-climatic window, and provides ICAR land preparation guidelines."*
 
 ---
 
-### 10. Native Multilingual Switch (Tamil & Hindi)
-- **Action:** Open the top navbar language dropdown. Switch to **Tamil (தமிழ்)**, then to **Hindi (हिन्दी)**.
-- **Visuals:** Instant re-rendering with zero hardcoded English leaks across 470 keys (100% key parity).
+### 10. Live Language Switch (Tamil, Hindi)
+- **Action:** Click the top navbar language selector. Switch to **Tamil (தமிழ்)**, then to **Hindi (हिन्दी)**.
+- **Visuals:** Instant re-rendering with zero untranslated English leaks across all 690 keys (100% key and placeholder parity). Noto Sans native font rendering with proper line heights.
 - **Spoken Script:**
-  > *"Language accessibility is foundational. AgriAdvisor supports 10 Indian regional languages with complete 100% key parity, persisting the cultivator's preference across devices."*
+  > *"AgriAdvisor is fully localized across 10 regional Indian languages with complete key and placeholder parity. Our automated crawl verified zero untranslated English leaks."*
 
 ---
 
-### 11. Voice Accessibility ("Listen" TTS Button & Voice Assistant)
-- **Action:**
-  - Click the **"Listen"** (speaker icon) button next to AI Crop Recommendation, Irrigation Advice, or Health check-in.
-  - In English mode, the browser synthesizes speech aloud.
-  - In languages without host speech packs, point out the disabled state and translated tooltip.
-  - Tap the **Microphone** icon in the navbar to show the Voice Question Assistant with quick question chips and typed fallback.
+### 11. Multilingual Voice Assistant
+- **Action:** Click the big floating microphone button (`#btn-floating-voice-mic`) in the bottom right.
+- **Visuals:**
+  - Visual states: Idle, Listening (pulsing red), Thinking, Speaking, plus Stop button.
+  - Live transcript and text response on screen (sentence-splitting to prevent Chrome cutoffs).
+  - Quick question chips: *"Should I irrigate today?"*, *"Which crop to grow?"*, *"Market price?"*.
+  - Layer 1 intent engine matches farmer's real data in $< 50\text{ ms}$.
 - **Spoken Script:**
-  > *"For low-literacy accessibility, our 'Listen' button vocalizes advisories using the browser's Web Speech API. If a device lacks regional speech packs, it gracefully falls back without crashing, supported by a typed voice query modal."*
+  > *"For low-literacy farmers, our floating voice assistant listens and speaks back in their regional language. The always-on Layer 1 intent engine answers 25+ agricultural queries directly from the farmer's real field data without hallucinations."*
 
 ---
 
 ## 🎓 Viva Examiner Q&A — Crisp Technical Answers
 
-### Q1: Why did you choose MongoDB instead of PostgreSQL or MySQL?
-> **Answer:** *"MongoDB is ideal for AgriAdvisor for two key reasons: first, our geospatial disease surveillance leverages MongoDB's native `2dsphere` indexes and `$geoNear` aggregation pipeline to calculate spherical distance offsets and cluster radius queries in under 5 milliseconds without needing external GIS plugins. Second, farm profiles, variable Soil Health Card schemas, and dynamic crop health check-in timelines map naturally to flexible JSON documents without complex multi-table join overhead."*
+### Q1: Why did you choose the MERN stack and a microservices architecture?
+> **Answer:** *"The MERN stack gives us non-blocking asynchronous event handling in Node.js and a responsive component-based UI in React. We decoupled the AI into a Python FastAPI microservice on port 8000 because Python has native PyTorch and scikit-learn support. MongoDB was chosen for two technical reasons: its native `2dsphere` indexes and `$geoNear` aggregation pipeline compute 10 km spherical disease alert buffers in $< 5\text{ ms}$, and its flexible document schema accommodates diverse Soil Health Card parameters without schema migration bottlenecks."*
 
 ---
 
-### Q2: Where is the AI located and how is it served?
-> **Answer:** *"The AI is decoupled into a dedicated Python FastAPI microservice running on port 8000. It hosts two scikit-learn Random Forest models (Crop Recommendation and Irrigation Urgency) and a PyTorch MobileNetV2 deep learning model for foliar disease image classification. The Node.js Express backend communicates with this service over internal HTTP REST endpoints."*
+### Q2: Why did you NOT feed today's weather forecast to the crop recommendation model?
+> **Answer:** *"Feeding today's single-day forecast to a crop recommendation model is an agronomic anti-pattern. A single rainy afternoon in June does not indicate that a field is suitable for water-intensive paddy. Instead, our backend queries the Open-Meteo Historical Archive API for the farm's exact latitude and longitude over the previous 5 years, computing the seasonal average temperature, humidity, and cumulative rainfall for Kharif, Rabi, or Zaid. This ensures recommendations reflect long-term agro-climatic reality."*
 
 ---
 
-### Q3: Which model uses real data and which uses practice data, and why?
+### Q3: How is your irrigation model (Model 2) grounded in real science?
+> **Answer:** *"Model 2 is built upon the internationally accepted FAO-56 Penman-Monteith daily soil water balance equations. We trained it on 3 years of real daily weather (temperature, precipitation, and reference evapotranspiration $ET_0$) across 30 Indian agricultural locations (226,800 records). It incorporates FAO crop coefficients ($K_c$), rooting depths ($Z_r$), soil available water holding capacity ($AWHC$), and irrigation method efficiencies. To prevent temporal and spatial data leakage, we evaluated on 6 completely held-out geographic locations, achieving a Macro F1 score of **0.9992**."*
+
+---
+
+### Q4: How does Model 3 handle non-leaf or unclear images?
+> **Answer:** *"To prevent false disease alerts, Model 3 implements a three-pronged mathematical rejection filter: first, a maximum probability threshold ($p_{\max} < 0.65$); second, a normalized Shannon entropy threshold ($H_{\text{norm}} > 0.40$), indicating uniform confusion across classes; and third, a color standard deviation threshold ($\sigma < 15.0$) to catch solid frames. In our automated test suite across 10 non-leaf images (noise, walls, sky, checkerboards, asphalt), it achieved a **100% rejection rate (10/10)**, returning 'unclear' with helpful photo capture tips."*
+
+---
+
+### Q5: What is your safety policy regarding chemical pesticides?
+> **Answer:** *"We enforce a strict agricultural safety policy across all models, API endpoints, and the voice assistant: the system never outputs chemical brand names, commercial pesticide products, or chemical dosages. It prescribes only certified cultural management practices—such as crop rotation, lower leaf pruning for canopy airflow, sanitized pruning shears, and certified seed selection—and explicitly mandates: 'Consult your local agricultural extension officer (KVK)'."*
+
+---
+
+### Q6: How do you guarantee zero translation leaks across 10 languages?
+> **Answer:** *"We maintain 100% key parity and placeholder parity across all 690 keys in 10 languages (`en`, `ta`, `hi`, `te`, `kn`, `ml`, `mr`, `bn`, `gu`, `pa`). We created `glossary.json` with 60 standardized terms from ICAR and State Agricultural Universities. Our automated Playwright crawler visits all 7 routes across desktop and mobile viewports in regional languages, scanning DOM nodes against strict allowlists (tech brands, units). The audit report confirmed **0 leaks detected** across the entire application."*
+
+---
+
+### Q7: What are the current operational limitations of the project?
 > **Answer:**
-> - *"**Model 1 (Crop Recommendation)** uses **real agricultural data** (2,200 verified ICAR/Kaggle soil and climate records across 22 crops) achieving 99.55% accuracy."*
-> - *"**Model 3 (Foliar Disease Classifier)** uses **real data** (PlantVillage benchmark dataset across 6 disease classes) achieving 98.15% test accuracy."*
-> - *"**Model 2 (Irrigation Urgency)** uses **practice data (synthetic bootstrap)**. We chose this honestly because continuous multi-sensor IoT soil probe time-series across varied Indian soils are proprietary and unavailable publicly. We generated 1,800 records strictly grounded in FAO-56 Penman-Monteith soil-water balance equations. The UI transparently labels this with an informational badge."*
-
----
-
-### Q4: What happens if the AI service goes down during operation?
-> **Answer:** *"The platform uses graceful degradation. The Express backend catches the connection failure and returns `available: false` with the translation key `ai_insights_unavailable`. The UI renders a clean, neutral notification box in place of the predictions. All other modules—micro-weather, GIS maps, farm records, mandi prices, and crop lifecycle—continue functioning normally without any blank screens or crashes."*
-
----
-
-### Q5: How does the community disease alert work, and what is demo data?
-> **Answer:**
-> - *"When any cultivator logs two consecutive 'Concerning' check-ins or an AI diagnosis detects a foliar disease, the system automatically creates an `OutbreakReport` with a randomized ~500-meter geodesic offset to strictly protect farmer privacy (no farmer names, phone numbers, or exact coordinates are ever shared)."*
-> - *"The overview banner and GIS map query MongoDB using `$geoNear` within a 10 km radius, filtering strictly for the same crop reported in the last 14 days and excluding the farmer's own plot."*
-> - *"Demo reports are marked `isDemo: true` in the database and explicitly tagged with a visible `[Demo Data]` badge in the UI so evaluators can inspect real-time surveillance without mistaking simulated events for actual agricultural outbreaks."*
-
----
-
-### Q6: What is NOT built yet?
-> **Answer:**
-> - *"1. Direct hardware telemetry ingestion from physical IoT soil moisture probes in the field (currently driven by soil texture benchmarks and Open-Meteo forecasts)."*
-> - *"2. Direct production Agmarknet API key integration from data.gov.in (our current data uses authentic historical mandi snapshots with API status labeled `pending_access_key`)."*
-> - *"3. On-device offline text-to-speech engine for regional languages that lack native Windows/Android speech packs."*
+> 1. *"Hardware telemetry: Real-time soil moisture is calculated from FAO-56 balance equations and farmer check-ins; physical IoT capacitive probe hardware is not physically deployed."*
+> 2. *"Mandi live API: Market prices use authentic historical APMC mandi snapshots while production API key issuance from data.gov.in remains pending (`pending_access_key`)."*
+> 3. *"TTS voices: Speech synthesis uses the browser Web Speech API. While English is installed on this host, regional Indian languages require host OS language packs, so they gracefully display a translated text alert banner."*

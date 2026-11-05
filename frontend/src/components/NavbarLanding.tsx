@@ -27,11 +27,7 @@ export const NavbarLanding: React.FC = () => {
           </div>
         </Link>
 
-        {/* Center: Live System Status Tag */}
-        <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-[#EBF5EE] text-[#1E4620] border border-[#2D6A4F]/20 text-xs font-bold shadow-2xs">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>Level 3 Agricultural Intelligence System</span>
-        </div>
+
 
         {/* Right: Language Switcher, Login and Sign Up buttons */}
         <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">

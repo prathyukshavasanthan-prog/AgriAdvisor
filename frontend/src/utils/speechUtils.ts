@@ -55,6 +55,16 @@ export const hasVoiceForLanguage = (langCode: string): boolean => {
   return getVoiceForLanguage(langCode) !== null;
 };
 
+export const splitIntoSentences = (text: string): string[] => {
+  if (!text) return [];
+  const matches = text.match(/[^.!?।\n]+[.!?।\n]+|[^.!?।\n]+$/g);
+  if (!matches || matches.length === 0) return [text.trim()];
+  return matches.map((s) => s.trim()).filter((s) => s.length > 0);
+};
+
+let currentSpeakingQueue: SpeechSynthesisUtterance[] = [];
+let isQueueActive = false;
+
 export const speakText = (
   text: string,
   langCode: string,
@@ -75,29 +85,53 @@ export const speakText = (
     return false;
   }
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.voice = voice;
-  utterance.lang = voice.lang;
-  utterance.rate = 0.95; // Slightly slower for clear agrarian comprehension
-  utterance.pitch = 1.0;
+  const sentences = splitIntoSentences(text);
+  if (sentences.length === 0) return false;
 
-  utterance.onstart = () => {
-    if (onStart) onStart();
+  isQueueActive = true;
+  let currentIndex = 0;
+
+  const speakNext = () => {
+    if (!isQueueActive || currentIndex >= sentences.length) {
+      isQueueActive = false;
+      if (onEnd) onEnd();
+      return;
+    }
+
+    const sentence = sentences[currentIndex];
+    const utterance = new SpeechSynthesisUtterance(sentence);
+    utterance.voice = voice;
+    utterance.lang = voice.lang;
+    utterance.rate = 0.95; // Slightly slower for clear agrarian comprehension
+    utterance.pitch = 1.0;
+
+    if (currentIndex === 0 && onStart) {
+      utterance.onstart = () => {
+        onStart();
+      };
+    }
+
+    utterance.onend = () => {
+      currentIndex++;
+      speakNext();
+    };
+
+    utterance.onerror = (e) => {
+      isQueueActive = false;
+      if (onError) onError(e);
+    };
+
+    currentSpeakingQueue.push(utterance);
+    window.speechSynthesis.speak(utterance);
   };
 
-  utterance.onend = () => {
-    if (onEnd) onEnd();
-  };
-
-  utterance.onerror = (e) => {
-    if (onError) onError(e);
-  };
-
-  window.speechSynthesis.speak(utterance);
+  speakNext();
   return true;
 };
 
 export const stopSpeaking = (): void => {
+  isQueueActive = false;
+  currentSpeakingQueue = [];
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     window.speechSynthesis.cancel();
   }

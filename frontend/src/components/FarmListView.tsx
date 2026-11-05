@@ -37,7 +37,7 @@ export const FarmListView: React.FC<FarmListViewProps> = ({
     return (
       <div className="bg-white border border-[#D8D5C5] rounded-3xl p-12 text-center text-stone-500 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-3 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm font-semibold">Loading your registered farms...</span>
+        <span className="text-sm font-semibold">{t('loading_registered_farms', 'Loading your registered farms...')}</span>
       </div>
     );
   }
@@ -50,7 +50,7 @@ export const FarmListView: React.FC<FarmListViewProps> = ({
           <h1 className="text-xl sm:text-2xl font-black text-[#14251B] tracking-tight">
             {t('farms_page_title')}
           </h1>
-          <p className="text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
+          <p className="hidden sm:block text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
             {t('farms_page_sub')}
           </p>
         </div>

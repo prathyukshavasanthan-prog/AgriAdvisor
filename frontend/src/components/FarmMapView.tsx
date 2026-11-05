@@ -614,7 +614,7 @@ export const FarmMapView: React.FC<FarmMapViewProps> = ({
             </div>
             ${mandi.distance_km !== undefined ? `
               <div style="display: flex; justify-content: space-between;">
-                <span style="color: #64748B;">Distance:</span>
+                <span style="color: #64748B;">${t('distance_label', 'Distance:')}</span>
                 <strong style="color: #1E293B;">${mandi.distance_km} km away</strong>
               </div>
             ` : ''}
@@ -1163,7 +1163,7 @@ export const FarmMapView: React.FC<FarmMapViewProps> = ({
           {loadingMandis ? (
             <div className="p-8 text-center text-xs font-semibold text-stone-500 flex items-center justify-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin text-[#1E4620]" />
-              <span>Calculating nearby mandi distances and market prices...</span>
+              <span>{t('calculating_mandi_prices', 'Calculating nearby mandi distances and market prices...')}</span>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1206,7 +1206,7 @@ export const FarmMapView: React.FC<FarmMapViewProps> = ({
                       </div>
 
                       <div className="text-right">
-                        <span className="text-[11px] text-stone-500 block">Distance:</span>
+                        <span className="text-[11px] text-stone-500 block">{t('distance_label', 'Distance:')}</span>
                         <span className="font-bold text-stone-800">
                           {mandi.distance_km !== undefined ? t('mandi_distance_km', { distance: mandi.distance_km }) : '—'}
                         </span>
@@ -1266,7 +1266,7 @@ export const FarmMapView: React.FC<FarmMapViewProps> = ({
           {loadingOutbreaks ? (
             <div className="p-8 text-center text-xs font-semibold text-stone-500 flex items-center justify-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin text-orange-600" />
-              <span>Checking community disease surveillance reports...</span>
+              <span>{t('checking_disease_reports', 'Checking community disease surveillance reports...')}</span>
             </div>
           ) : nearbyOutbreaks.length === 0 ? (
             <div className="p-6 text-center text-xs font-semibold text-stone-500 bg-stone-50 rounded-2xl border border-dashed border-stone-200">

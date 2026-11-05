@@ -27,7 +27,10 @@ import {
   ShieldCheck,
   RefreshCw,
   Info,
-  Calendar
+  Calendar,
+  Sun,
+  ZoomIn,
+  Leaf
 } from 'lucide-react';
 import { SAMPLE_LEAF_IMAGES } from '../data/sampleLeafImages.js';
 import { useAuth } from '../context/AuthContext.js';
@@ -342,7 +345,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
     return (
       <div className="bg-white border border-[#D8D5C5] rounded-3xl p-12 text-center text-stone-500 flex flex-col items-center justify-center gap-3">
         <div className="w-8 h-8 border-3 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm font-semibold">Loading farm details...</span>
+        <span className="text-sm font-semibold">{t('loading_farm_details', 'Loading farm details...')}</span>
       </div>
     );
   }
@@ -446,7 +449,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
             <div className="flex items-center gap-2">
               <Wind className="w-4 h-4 text-stone-500" />
               <div>
-                <div className="text-[10px] text-stone-500 font-bold uppercase">Wind</div>
+                <div className="text-[10px] text-stone-500 font-bold uppercase">{t('weather_wind', 'Wind')}</div>
                 <div className="text-sm font-black text-stone-800">{farmData.weather.wind_speed} km/h</div>
               </div>
             </div>
@@ -494,7 +497,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
             <div className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-3 text-center">
               <div className="text-[11px] font-bold text-stone-500 uppercase">{t('farm_field_soil_ph')}</div>
               <div className="text-xl font-black text-[#1E4620] mt-1">{farmData.soil_ph ?? 6.5}</div>
-              <div className="text-[10px] text-stone-400">Acidity Scale</div>
+              <div className="text-[10px] text-stone-400">{t('acidity_scale', 'Acidity Scale')}</div>
             </div>
           </div>
         </div>
@@ -651,8 +654,8 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
             {/* Progress Bar */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs font-bold text-stone-600">
-                <span>Cycle Progression</span>
-                <span>{cropLifecycle.progress_percentage}% Completed</span>
+                <span>{t('cycle_progression', 'Cycle Progression')}</span>
+                <span>{cropLifecycle.progress_percentage}% {t('completed', 'Completed')}</span>
               </div>
               <div className="w-full h-3 bg-stone-200 rounded-full overflow-hidden">
                 <div
@@ -993,7 +996,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                 {healthSuccessMsg ? (
                   <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Check-in saved successfully!</span>
+                    <span>{t('checkin_saved', 'Check-in saved successfully!')}</span>
                   </span>
                 ) : (
                   <span className="text-xs text-stone-500 font-medium">
@@ -1039,6 +1042,28 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                       <span>{t(sample.nameKey as any)}</span>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Photo Tips with Icons (one leaf, daylight, close-up) */}
+              <div className="bg-emerald-50/70 border border-emerald-200 rounded-2xl p-3.5 space-y-2" id="photo-diagnosis-tips-panel">
+                <div className="text-xs font-bold text-emerald-900 flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-[#1E4620]" />
+                  <span>{t('health_photo_tip_title')}</span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-stone-700 font-medium">
+                  <div className="flex items-center gap-2 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-2xs">
+                    <Leaf className="w-4 h-4 text-emerald-700 shrink-0" />
+                    <span>{t('health_photo_tip_single')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-2xs">
+                    <Sun className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>{t('health_photo_tip_daylight')}</span>
+                  </div>
+                  <div className="flex items-center gap-2 bg-white/90 p-2 rounded-xl border border-emerald-100 shadow-2xs">
+                    <ZoomIn className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span>{t('health_photo_tip_closeup')}</span>
+                  </div>
                 </div>
               </div>
 
@@ -1094,7 +1119,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                     ) : (
                       <div className="w-full h-36 rounded-2xl border border-stone-200 bg-white flex flex-col items-center justify-center text-stone-400 text-xs gap-1.5 p-4 text-center">
                         <Camera className="w-6 h-6 stroke-1 text-stone-300" />
-                        <span>No photograph selected yet. Pick a sample leaf above or upload your own.</span>
+                        <span>{t('leaf_upload_instruction', 'No photograph selected yet. Pick a sample leaf above or upload your own.')}</span>
                       </div>
                     )}
                   </div>
@@ -1132,12 +1157,18 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
 
               {/* AI DIAGNOSIS RESULT CARD */}
               {aiDiagnosis && (
-                <div className="bg-white border-2 border-emerald-600/30 rounded-2xl p-5 shadow-xs space-y-4 animate-in fade-in duration-300">
+                <div className={`bg-white border-2 rounded-2xl p-5 shadow-xs space-y-4 animate-in fade-in duration-300 ${
+                  aiDiagnosis.is_unclear ? 'border-amber-400 bg-amber-50/20' : 'border-emerald-600/30'
+                }`} id="ai-diagnosis-result-card">
                   <div className="flex items-center justify-between border-b border-stone-100 pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-800 border border-indigo-200 flex items-center gap-1.5">
+                      <span className={`text-[11px] font-black uppercase px-2.5 py-0.5 rounded-full border flex items-center gap-1.5 ${
+                        aiDiagnosis.is_unclear
+                          ? 'bg-amber-100 text-amber-900 border-amber-300'
+                          : 'bg-indigo-50 text-indigo-800 border-indigo-200'
+                      }`}>
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span>{t('health_diagnosis_result_title')}</span>
+                        <span>{aiDiagnosis.is_unclear ? t('health_unclear_title') : t('health_diagnosis_result_title')}</span>
                       </span>
                       <span className="text-[11px] font-bold text-stone-500">
                         PlantVillage MobileNetV2
@@ -1147,31 +1178,35 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                     <div className="flex items-center gap-2">
                       <SpeechListenButton
                         id="btn-listen-ai-diagnosis"
-                        textToSpeak={`AI diagnosis result: ${aiDiagnosis.predicted_class} with ${aiDiagnosis.confidence} confidence. ${aiDiagnosis.general_guidance || ''}`}
+                        textToSpeak={
+                          aiDiagnosis.is_unclear
+                            ? `${t('health_unclear_title')}. ${aiDiagnosis.general_guidance || t('health_unclear_message')}`
+                            : `AI diagnosis: ${aiDiagnosis.predicted_class}. Likelihood: ${aiDiagnosis.likelihood || aiDiagnosis.confidence}. ${aiDiagnosis.general_guidance || ''}`
+                        }
                       />
 
                       <span className={`text-xs font-black uppercase px-2.5 py-0.5 rounded ${
-                        aiDiagnosis.low_confidence 
-                          ? 'bg-amber-100 text-amber-900 border border-amber-300' 
+                        aiDiagnosis.is_unclear
+                          ? 'bg-amber-200 text-amber-950 border border-amber-400'
                           : aiDiagnosis.is_healthy 
                           ? 'bg-emerald-100 text-emerald-900 border border-emerald-300' 
                           : 'bg-rose-100 text-rose-900 border border-rose-300'
                       }`}>
-                        {aiDiagnosis.low_confidence ? 'Uncertain' : aiDiagnosis.is_healthy ? 'Normal' : 'Pathology Detected'}
+                        {aiDiagnosis.is_unclear ? t('health_likelihood_unclear') : aiDiagnosis.is_healthy ? 'Normal' : 'Pathology Detected'}
                       </span>
                     </div>
                   </div>
 
-                  {/* Icon + predicted_class as the LARGEST element */}
+                  {/* Main Diagnosis / Rejection Block */}
                   <div className="flex items-start gap-3.5 pt-1">
                     <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border ${
-                      aiDiagnosis.low_confidence
+                      aiDiagnosis.is_unclear
                         ? 'bg-amber-100 border-amber-300 text-amber-900'
                         : aiDiagnosis.is_healthy
                         ? 'bg-emerald-100 border-emerald-300 text-emerald-900'
                         : 'bg-rose-100 border-rose-300 text-rose-900'
                     }`}>
-                      {aiDiagnosis.low_confidence ? (
+                      {aiDiagnosis.is_unclear ? (
                         <HelpCircle className="w-7 h-7 stroke-[2.5]" />
                       ) : aiDiagnosis.is_healthy ? (
                         <CheckCircle2 className="w-7 h-7 stroke-[2.5]" />
@@ -1181,14 +1216,26 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                     </div>
 
                     <div>
-                      {/* Predicted class is largest element */}
                       <h2 className="text-xl sm:text-2xl font-black text-stone-900 tracking-tight" id="ai-diagnosis-predicted-class">
-                        {aiDiagnosis.predicted_class}
+                        {aiDiagnosis.is_unclear ? t('health_unclear_title') : aiDiagnosis.predicted_class}
                       </h2>
-                      {/* Confidence as plain text */}
                       <div className="text-xs text-stone-600 font-semibold mt-0.5 flex items-center gap-1.5" id="ai-diagnosis-confidence-text">
                         <span>{t('health_confidence_label')}</span>
-                        <span className="font-bold text-stone-900">{aiDiagnosis.confidence}</span>
+                        <span className={`font-bold px-2 py-0.5 rounded text-[11px] ${
+                          aiDiagnosis.is_unclear
+                            ? 'bg-amber-100 text-amber-900'
+                            : aiDiagnosis.likelihood === 'Very likely'
+                            ? 'bg-emerald-100 text-emerald-900'
+                            : 'bg-stone-100 text-stone-800'
+                        }`}>
+                          {aiDiagnosis.is_unclear
+                            ? t('health_likelihood_unclear')
+                            : aiDiagnosis.likelihood === 'Very likely'
+                            ? t('health_likelihood_very_likely')
+                            : aiDiagnosis.likelihood === 'Likely'
+                            ? t('health_likelihood_likely')
+                            : t('health_likelihood_possible')}
+                        </span>
                         <span>({(aiDiagnosis.confidence_score * 100).toFixed(1)}%)</span>
                       </div>
                     </div>
@@ -1201,36 +1248,75 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
                       <span>{t('health_guidance_label')}</span>
                     </div>
                     <p className="text-xs text-stone-700 leading-relaxed font-medium" id="ai-diagnosis-guidance-text">
-                      {aiDiagnosis.general_guidance}
+                      {aiDiagnosis.general_guidance || (aiDiagnosis.is_unclear ? t('health_unclear_message') : '')}
                     </p>
                   </div>
 
-                  {/* AI Assessed Distinguishing Note */}
+                  {/* TOP 3 RANKED DIAGNOSES (When valid leaf recognized) */}
+                  {!aiDiagnosis.is_unclear && aiDiagnosis.top_3 && aiDiagnosis.top_3.length > 0 && (
+                    <div className="p-3 bg-stone-50/80 border border-stone-200 rounded-xl space-y-2" id="ai-diagnosis-top-3-container">
+                      <span className="text-xs font-bold text-stone-700 block">
+                        {t('health_top_3_heading')}
+                      </span>
+                      <div className="space-y-1.5">
+                        {aiDiagnosis.top_3.map((item: any, idx: number) => {
+                          const lText = item.likelihood === 'Very likely' 
+                            ? t('health_likelihood_very_likely') 
+                            : item.likelihood === 'Likely' 
+                            ? t('health_likelihood_likely') 
+                            : t('health_likelihood_possible');
+                          return (
+                            <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-200 text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-700 font-bold flex items-center justify-center text-[10px]">
+                                  #{idx + 1}
+                                </span>
+                                <span className="font-bold text-stone-800">{item.class_name}</span>
+                              </div>
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                                item.likelihood === 'Very likely'
+                                  ? 'bg-emerald-100 text-emerald-900'
+                                  : item.likelihood === 'Likely'
+                                  ? 'bg-amber-100 text-amber-900'
+                                  : 'bg-stone-100 text-stone-600'
+                              }`}>
+                                {lText}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Honest Model Disclaimer Note */}
                   <div className="p-2.5 bg-emerald-50/50 border border-emerald-200/50 rounded-xl flex items-start gap-2 text-[11px] text-stone-600">
                     <Info className="w-3.5 h-3.5 shrink-0 text-[#1E4620] mt-0.5" />
-                    <span>{t('health_ai_assessed_note')}</span>
+                    <span>{t('health_honest_model_note')}</span>
                   </div>
 
                   {/* Save to History Button */}
-                  <div className="flex items-center justify-between pt-2 border-t border-stone-100">
-                    {healthSuccessMsg ? (
-                      <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>{t('health_saved_ai_success')}</span>
-                      </span>
-                    ) : <span />}
+                  {!aiDiagnosis.is_unclear && (
+                    <div className="flex items-center justify-between pt-2 border-t border-stone-100">
+                      {healthSuccessMsg ? (
+                        <span className="text-xs font-bold text-emerald-700 flex items-center gap-1.5">
+                          <CheckCircle2 className="w-4 h-4" />
+                          <span>{t('health_saved_ai_success')}</span>
+                        </span>
+                      ) : <span />}
 
-                    <button
-                      type="button"
-                      id="btn-save-ai-diagnosis"
-                      disabled={savingAiLog}
-                      onClick={handleSaveAIDiagnosisToHistory}
-                      className="h-10 px-5 rounded-xl bg-[#1E4620] hover:bg-[#163719] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
-                    >
-                      <CheckCircle2 className="w-4 h-4 text-emerald-300" />
-                      <span>{savingAiLog ? 'Saving...' : t('health_btn_save_ai_log')}</span>
-                    </button>
-                  </div>
+                      <button
+                        type="button"
+                        id="btn-save-ai-diagnosis"
+                        disabled={savingAiLog}
+                        onClick={handleSaveAIDiagnosisToHistory}
+                        className="h-10 px-5 rounded-xl bg-[#1E4620] hover:bg-[#163719] text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="w-4 h-4 text-emerald-300" />
+                        <span>{savingAiLog ? 'Saving...' : t('health_btn_save_ai_log')}</span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -1250,7 +1336,7 @@ export const FarmDetailView: React.FC<FarmDetailViewProps> = ({
           </div>
 
           {loadingHealth ? (
-            <div className="p-8 text-center text-xs text-stone-400">Loading history...</div>
+            <div className="p-8 text-center text-xs text-stone-400">{t('loading_history', 'Loading history...')}</div>
           ) : healthLogs.length === 0 ? (
             <div className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-6 text-center text-xs text-stone-500 font-medium">
               {t('health_history_empty')}

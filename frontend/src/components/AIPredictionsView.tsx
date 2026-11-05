@@ -14,6 +14,10 @@ import {
   Wind,
   Calendar,
   Clock,
+  Filter,
+  CloudRain,
+  Thermometer,
+  ShieldAlert,
   AlertCircle,
   HelpCircle
 } from 'lucide-react';
@@ -37,6 +41,37 @@ export const AIPredictionsView: React.FC = () => {
   // Model 2: Irrigation Advisory State
   const [irrigRec, setIrrigRec] = useState<any | null>(null);
   const [loadingIrrigRec, setLoadingIrrigRec] = useState(false);
+  const [loggingWatered, setLoggingWatered] = useState(false);
+  const [wateredNotice, setWateredNotice] = useState<string | null>(null);
+
+  const handleWateredToday = async () => {
+    if (!currentFarm || !token) return;
+    setLoggingWatered(true);
+    setWateredNotice(null);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/farms/${currentFarm._id}/watered-today`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          method: currentFarm.irrigation_method || 'drip',
+          amount_mm: 25.0,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setWateredNotice(String(t('btn_watered_today_success', 'Watering recorded today. Moisture balance updated.')));
+        fetchPredictionsForFarm(currentFarm);
+        setTimeout(() => setWateredNotice(null), 5000);
+      }
+    } catch (e) {
+      console.error('Failed to log watering:', e);
+    } finally {
+      setLoggingWatered(false);
+    }
+  };
 
   // 1. Fetch user's registered farms
   useEffect(() => {
@@ -81,10 +116,13 @@ export const AIPredictionsView: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          soil_n: farm.soil_n ?? 90,
-          soil_p: farm.soil_p ?? 42,
-          soil_k: farm.soil_k ?? 43,
-          soil_ph: farm.soil_ph ?? 6.5,
+          soil_type: farm.soil_type || 'alluvial',
+          soil_n: farm.soil_n,
+          soil_p: farm.soil_p,
+          soil_k: farm.soil_k,
+          soil_ph: farm.soil_ph,
+          land_type: farm.land_type || 'irrigated',
+          water_source: farm.water_source || 'borewell',
           latitude: farm.latitude,
           longitude: farm.longitude,
         }),
@@ -132,7 +170,7 @@ export const AIPredictionsView: React.FC = () => {
     return (
       <div className="bg-white border border-[#D8D5C5] rounded-3xl p-12 text-center text-stone-500 flex flex-col items-center justify-center gap-3 shadow-xs">
         <div className="w-8 h-8 border-3 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-        <span className="text-sm font-semibold">Loading farm plots & intelligence engines...</span>
+        <span className="text-sm font-semibold">{t('ai_loading_plots', 'Loading farm plots & intelligence engines...')}</span>
       </div>
     );
   }
@@ -182,14 +220,14 @@ export const AIPredictionsView: React.FC = () => {
         <div>
           <div className="flex items-center gap-2 text-[#1E4620] mb-1">
             <Sparkles className="w-5 h-5 text-amber-500 stroke-[2.2]" />
-            <span className="text-xs font-bold uppercase tracking-wider text-stone-500">
-              Machine Learning Intelligence Hub
+            <span className="hidden sm:inline text-xs font-bold uppercase tracking-wider text-stone-500">
+              {t('machine_learning_hub', 'Machine Learning Intelligence Hub')}
             </span>
           </div>
           <h1 className="text-xl sm:text-2xl font-black text-[#14251B] tracking-tight">
             {t('ai_page_title')}
           </h1>
-          <p className="text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
+          <p className="hidden sm:block text-xs sm:text-sm text-stone-500 mt-1 max-w-2xl">
             {t('ai_page_sub')}
           </p>
         </div>
@@ -258,7 +296,7 @@ export const AIPredictionsView: React.FC = () => {
         <div className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2 font-bold text-stone-700">
             <FlaskConical className="w-4 h-4 text-[#1E4620]" />
-            <span>Plot Soil Chemistry:</span>
+            <span>{t('soil_chemistry_title', 'Plot Soil Chemistry:')}</span>
           </div>
           <div className="flex items-center gap-4 text-stone-600 font-medium">
             <span>N: <strong className="text-stone-800">{currentFarm.soil_n ?? 90}</strong> kg/ha</span>
@@ -305,8 +343,16 @@ export const AIPredictionsView: React.FC = () => {
                 {cropRec && cropRec.available && cropRec.recommended_crop && (
                   <SpeechListenButton
                     id="btn-listen-crop-rec"
-                    textToSpeak={`${t('ai_crop_rec_title')}: ${cropRec.recommended_crop}. ${cropRec.confidence || 'High'} confidence. ${cropRec.sowing_advisory?.sowing_note || ''} ${cropRec.sowing_advisory?.land_preparation_guidance || ''}`}
+                    textToSpeak={`${t('ai_crop_rec_title')}: ${t(`crop_${cropRec.recommended_crop}` as any, cropRec.recommended_crop)}. ${cropRec.likelihood || 'Likely'}. ${(cropRec.reasons || []).join('. ')}`}
                   />
+                )}
+
+                {/* Filtered for your land badge */}
+                {cropRec && cropRec.filtered_for_land && (
+                  <div id="ai-filtered-for-land-badge" className="flex items-center gap-1.5 bg-emerald-100 text-emerald-900 border border-emerald-300 px-3 py-1 rounded-full text-xs font-bold shadow-2xs">
+                    <Filter className="w-3.5 h-3.5 text-emerald-700" />
+                    <span>{t('filtered_for_land_badge')}</span>
+                  </div>
                 )}
 
                 {/* Data Source Badge: Real Agricultural Data (ICAR India) */}
@@ -325,10 +371,25 @@ export const AIPredictionsView: React.FC = () => {
             {loadingCropRec ? (
               <div className="py-8 text-center text-xs text-stone-500 font-medium flex items-center justify-center gap-2.5">
                 <div className="w-5 h-5 border-2 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-                <span>Querying 2,200 ICAR agricultural benchmarks...</span>
+                <span>{t('ai_crop_loading_benchmarks', 'Querying 2,200 ICAR agricultural benchmarks & 5-year climatology...')}</span>
               </div>
             ) : cropRec && cropRec.available && cropRec.recommended_crop ? (
               <div className="space-y-5 pt-2">
+                {/* Low Confidence Warning (Probability < 0.5 or needs_soil_health_card) */}
+                {(cropRec.needs_soil_health_card || (cropRec.confidence_score && cropRec.confidence_score < 0.5)) && (
+                  <div id="ai-crop-low-confidence-banner" className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 flex items-start gap-3 shadow-xs">
+                    <AlertTriangle className="w-5 h-5 text-amber-700 flex-shrink-0 mt-0.5" />
+                    <div className="space-y-1">
+                      <div className="text-sm font-black text-amber-900">
+                        {t('needs_shc_warning_title')}
+                      </div>
+                      <p className="text-xs text-amber-800 font-medium leading-relaxed">
+                        {t('needs_shc_warning_text')}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 {/* Recommended Crop Card - LARGEST ELEMENT MANDATE */}
                 <div className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -347,39 +408,123 @@ export const AIPredictionsView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Confidence Shown As Plain Text */}
+                  {/* Confidence & Plain-words Likelihood */}
                   <div className="flex flex-col items-start sm:items-end gap-1 flex-shrink-0">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
                       {t('ai_crop_confidence')}
                     </span>
                     <div 
                       id="ai-crop-confidence-text"
-                      className="text-base sm:text-lg font-bold text-stone-800"
+                      className="text-base sm:text-lg font-bold text-stone-800 flex items-center gap-2"
                     >
-                      {cropRec.confidence || 'High'} ({Math.round((cropRec.confidence_score || 0.95) * 100)}%)
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-900 text-xs font-black">
+                        {cropRec.likelihood || 'Very Likely'}
+                      </span>
+                      <span>({Math.round((cropRec.confidence_score || 0.95) * 100)}%)</span>
                     </div>
                     <span className="text-[11px] text-stone-500 font-medium">
-                      Soil Suitability Match
+                      Calibrated Sigmoid Probability
                     </span>
                   </div>
                 </div>
 
-                {/* The 2 Alternative Crop Suggestions Shown Smaller Below */}
-                {cropRec.alternatives && cropRec.alternatives.length > 0 && (
-                  <div className="bg-white border border-stone-200 rounded-2xl p-4 space-y-2">
-                    <div className="text-xs font-bold uppercase tracking-wider text-stone-600">
-                      {t('ai_crop_alternatives')} (Secondary Choices):
+                {/* Top 3 Crops Card with Plain-Words Likelihood & 2 Short Reasons */}
+                {cropRec.top_3 && cropRec.top_3.length > 0 && (
+                  <div id="ai-top-3-crops-panel" className="bg-white border border-stone-200 rounded-2xl p-5 space-y-3">
+                    <div className="text-xs font-bold uppercase tracking-wider text-stone-600 flex items-center justify-between">
+                      <span className="flex items-center gap-2">
+                        <Sprout className="w-4 h-4 text-[#1E4620]" />
+                        <span>{t('top_3_crops_title')}</span>
+                      </span>
+                      {cropRec.filtered_for_land && (
+                        <span className="text-[11px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded-md flex items-center gap-1">
+                          <Filter className="w-3 h-3 text-emerald-600" />
+                          <span>{t('filtered_for_land_badge')}</span>
+                        </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2.5 flex-wrap">
-                      {cropRec.alternatives.map((alt: string) => (
-                        <div
-                          key={alt}
-                          className="h-10 px-4 rounded-xl bg-stone-50 border border-stone-200 text-stone-700 font-bold text-xs sm:text-sm flex items-center gap-2 capitalize shadow-2xs"
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {cropRec.top_3.map((item: any, idx: number) => (
+                        <div 
+                          key={item.crop} 
+                          className={`rounded-xl p-4 border transition-all ${
+                            idx === 0 
+                              ? 'bg-emerald-50/50 border-emerald-300 ring-1 ring-emerald-300 shadow-2xs' 
+                              : 'bg-stone-50/80 border-stone-200'
+                          }`}
                         >
-                          <Sprout className="w-4 h-4 text-stone-500" />
-                          <span>{String(t(`crop_${alt}` as any, alt))}</span>
+                          <div className="flex items-center justify-between gap-2 mb-2">
+                            <div className="flex items-center gap-2">
+                              <span className={`w-5 h-5 rounded-full text-xs font-black flex items-center justify-center ${idx === 0 ? 'bg-[#1E4620] text-white' : 'bg-stone-200 text-stone-700'}`}>
+                                #{idx + 1}
+                              </span>
+                              <span className="font-black text-sm sm:text-base capitalize text-stone-900">
+                                {String(t(`crop_${item.crop}` as any, item.crop))}
+                              </span>
+                            </div>
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-white border border-stone-300 text-stone-800">
+                              {item.likelihood || 'Likely'}
+                            </span>
+                          </div>
+                          <div className="text-xs text-stone-500 font-semibold mb-2">
+                            {Math.round((item.probability || 0) * 100)}% match
+                          </div>
+                          <ul className="text-[11px] text-stone-600 space-y-1 list-disc list-inside">
+                            {(item.reasons || []).map((r: string, rIdx: number) => (
+                              <li key={rIdx} className="leading-snug">{r}</li>
+                            ))}
+                          </ul>
                         </div>
                       ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Inputs Used Panel (Soil, Season, 5-Yr Avg Rain, Temp, Humidity, Land Type, Water Source) */}
+                {cropRec.inputs_used && (
+                  <div id="ai-inputs-used-panel" className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-4 sm:p-5 space-y-3">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <div className="flex items-center gap-2">
+                        <Info className="w-4 h-4 text-[#1E4620]" />
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-stone-700">
+                          {t('inputs_used_title')}
+                        </h4>
+                      </div>
+                      <span className="text-[11px] text-stone-500 font-medium">
+                        {t('inputs_used_sub')}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                      <div className="bg-white p-3 rounded-xl border border-stone-200">
+                        <span className="text-stone-400 block text-[10px] font-bold uppercase">{t('inputs_used_soil')}</span>
+                        <span className="font-bold text-stone-800 capitalize">
+                          {String(t(`farm_soil_${cropRec.inputs_used.soil_type}` as any, cropRec.inputs_used.soil_type))}
+                        </span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-stone-200">
+                        <span className="text-stone-400 block text-[10px] font-bold uppercase">{t('inputs_used_season')}</span>
+                        <span className="font-bold text-stone-800">
+                          {cropRec.inputs_used.season_label || cropRec.inputs_used.season}
+                        </span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-stone-200">
+                        <span className="text-stone-400 flex items-center gap-1 text-[10px] font-bold uppercase">
+                          <CloudRain className="w-3 h-3 text-sky-600" />
+                          {t('inputs_used_rainfall')}
+                        </span>
+                        <span className="font-bold text-stone-800">
+                          {Math.round(cropRec.inputs_used.rainfall_seasonal)} mm
+                        </span>
+                      </div>
+                      <div className="bg-white p-3 rounded-xl border border-stone-200">
+                        <span className="text-stone-400 flex items-center gap-1 text-[10px] font-bold uppercase">
+                          <Thermometer className="w-3 h-3 text-amber-600" />
+                          {t('inputs_used_temp')} / {t('inputs_used_humidity')}
+                        </span>
+                        <span className="font-bold text-stone-800">
+                          {Math.round(cropRec.inputs_used.temperature_avg)}°C • {Math.round(cropRec.inputs_used.humidity_avg)}%
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -496,6 +641,24 @@ export const AIPredictionsView: React.FC = () => {
                   </div>
                 )}
 
+                {/* Crops Not Covered by This Model (22-crop catalog boundary) */}
+                <div id="ai-unsupported-crops-panel" className="bg-amber-50/50 border border-amber-200 rounded-2xl p-4 space-y-2">
+                  <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider">
+                    <ShieldAlert className="w-4 h-4 text-amber-700" />
+                    <span>{t('unsupported_crops_title')}</span>
+                  </div>
+                  <p className="text-xs text-stone-600 leading-relaxed">
+                    {t('unsupported_crops_desc')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {(cropRec.unsupported_crops || ['wheat', 'mustard', 'soybean', 'sugarcane', 'potato', 'onion', 'groundnut', 'barley', 'bajra', 'jowar']).map((c: string) => (
+                      <span key={c} className="text-[11px] font-medium bg-white text-stone-700 border border-stone-200 px-2.5 py-1 rounded-lg">
+                        {String(t(`crop_${c}` as any, c))}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
                 {/* Short Explanatory Note */}
                 <p className="text-xs text-stone-500 flex items-center gap-1.5 font-medium">
                   <Info className="w-4 h-4 text-stone-400 flex-shrink-0" />
@@ -538,33 +701,66 @@ export const AIPredictionsView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* One-Tap "I Watered Today" Button */}
+                <button
+                  id="btn-watered-today"
+                  onClick={handleWateredToday}
+                  disabled={loggingWatered}
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#EBF5EE] text-[#1E4620] hover:bg-[#d8edd9] border border-[#1E4620]/30 transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+                  title="Log that you applied irrigation today"
+                >
+                  <Droplets className="w-3.5 h-3.5 text-[#2D6A4F]" />
+                  <span>{loggingWatered ? 'Logging...' : t('btn_watered_today')}</span>
+                </button>
+
                 {irrigRec && irrigRec.available && (
                   <SpeechListenButton
                     id="btn-listen-irrig-rec"
-                    textToSpeak={`${t('ai_action_heading')}: ${irrigRec.recommended_action}. ${t('ai_urgency_label')}: ${irrigRec.urgency_level}. ${irrigRec.top_reasons?.[0]?.description || ''}`}
+                    textToSpeak={`${t('ai_action_heading')}: ${irrigRec.recommended_action}. ${t('ai_urgency_label')}: ${irrigRec.urgency_level}. ${irrigRec.top_reasons?.[0] || ''}`}
                   />
                 )}
 
-                {/* Data Source Badge: Domain-Informed Adaptive Model */}
+                {/* Data Source Badge: FAO-56 Agronomic Model */}
                 <div className="group relative flex items-center gap-1.5 bg-amber-50 text-amber-800 border border-amber-300 px-3 py-1 rounded-full text-xs font-bold cursor-help shadow-2xs">
                   <Info className="w-3.5 h-3.5 text-amber-700" />
-                  <span>{t('data_source_synthetic_badge')}</span>
+                  <span>{t('data_source_fao56_badge')}</span>
                   {/* Tooltip */}
                   <div className="absolute right-0 bottom-full mb-2 hidden group-hover:block w-72 bg-stone-900 text-white text-[11px] p-2.5 rounded-xl shadow-lg z-50 leading-relaxed">
-                    {t('ai_model2_source_note')}
+                    {t('ai_model2_fao_source_note')}
                   </div>
                 </div>
               </div>
             </div>
 
+            {/* Watered Success Banner */}
+            {wateredNotice && (
+              <div id="watered-today-notice" className="bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-medium px-4 py-2.5 rounded-xl flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                <span>{wateredNotice}</span>
+              </div>
+            )}
+
             {loadingIrrigRec ? (
               <div className="py-8 text-center text-xs text-stone-500 font-medium flex items-center justify-center gap-2.5">
                 <div className="w-5 h-5 border-2 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-                <span>Analyzing field weather, dry periods, and percolation physics...</span>
+                <span>{t('ai_irrigation_loading', 'Analyzing field weather, dry periods, and percolation physics...')}</span>
               </div>
             ) : irrigRec && irrigRec.available ? (
               <div className="space-y-5 pt-2">
+                {/* Rainfed Land Rain-Based Advice Banner */}
+                {irrigRec.is_rainfed_no_water && (
+                  <div id="ai-rainfed-advisory-box" className="bg-amber-50/80 border border-amber-300 rounded-2xl p-4 space-y-1.5">
+                    <div className="flex items-center gap-2 text-amber-900 font-bold text-xs uppercase tracking-wider">
+                      <AlertTriangle className="w-4 h-4 text-amber-700" />
+                      <span>{t('ai_rainfed_advisory_title')}</span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">
+                      {irrigRec.rain_based_guidance || t('action_conserve_soil_moisture')}
+                    </p>
+                  </div>
+                )}
+
                 {/* Recommended Action Card - LARGEST ELEMENT MANDATE */}
                 <div className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-1">
@@ -612,6 +808,37 @@ export const AIPredictionsView: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Root-Zone Soil Water Depletion Meter */}
+                {irrigRec.soil_water_depletion_pct !== undefined && (
+                  <div id="ai-soil-water-depletion-meter" className="bg-[#FBFBF9] border border-stone-200 rounded-2xl p-4 space-y-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-bold text-stone-600 uppercase tracking-wider">
+                        {t('ai_soil_depletion_label')}
+                      </span>
+                      <span className="font-black text-stone-900">
+                        {irrigRec.soil_water_depletion_pct}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-stone-200 rounded-full h-2.5 overflow-hidden">
+                      <div
+                        className={`h-2.5 rounded-full transition-all duration-500 ${
+                          irrigRec.soil_water_depletion_pct >= 50
+                            ? 'bg-rose-600'
+                            : irrigRec.soil_water_depletion_pct >= 30
+                            ? 'bg-amber-500'
+                            : 'bg-emerald-600'
+                        }`}
+                        style={{ width: `${Math.min(100, Math.max(5, irrigRec.soil_water_depletion_pct))}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[10px] text-stone-400 font-medium">
+                      <span>{t('field_capacity_label', '0% (Field Capacity)')}</span>
+                      <span>{t('depletion_threshold_label', '50% (Depletion Threshold)')}</span>
+                      <span>{t('wilting_point_label', '100% (Wilting Point)')}</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Top Reasons As Short Bullet Points With Relevant Icons */}
                 {irrigRec.top_reasons && irrigRec.top_reasons.length > 0 && (
                   <div className="bg-white border border-stone-200 rounded-2xl p-5 space-y-3">
@@ -638,7 +865,7 @@ export const AIPredictionsView: React.FC = () => {
                 {/* Short Explanatory Note on Continuous Learning */}
                 <p className="text-xs text-stone-500 flex items-center gap-1.5 font-medium">
                   <Info className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                  <span>{t('ai_model2_source_note')}</span>
+                  <span>{t('ai_model2_fao_source_note')}</span>
                 </p>
               </div>
             ) : (
@@ -648,7 +875,7 @@ export const AIPredictionsView: React.FC = () => {
               >
                 <div className="flex items-center gap-2 text-stone-700 font-bold text-sm">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
-                  <span>AI Insights Notice</span>
+                  <span>{t('ai_notice_title', 'AI Insights Notice')}</span>
                 </div>
                 <p className="text-xs sm:text-sm text-stone-600">
                   {t('ai_insights_unavailable')}

@@ -1,9 +1,11 @@
 {
-  "model_name": "Crop Recommendation (Model 1)",
-  "dataset": "Kaggle Crop Recommendation Dataset (Atharva Ingle / ICAR)",
-  "trained_on": "real_dataset",
+  "model_name": "Calibrated Crop Recommendation Model (Model 1)",
+  "algorithm": "Random Forest Classifier with Sigmoid Probability Calibration",
+  "dataset": "Atharva Ingle / ICAR Multi-Crop Dataset (22 crops)",
+  "dataset_type": "real_dataset",
   "total_samples": 2200,
-  "classes_count": 22,
+  "train_samples": 1760,
+  "test_samples": 440,
   "features": [
     "N",
     "P",
@@ -37,9 +39,65 @@
     "rice",
     "watermelon"
   ],
-  "accuracy": 0.9954545454545455,
-  "precision": 0.9956709956709956,
-  "recall": 0.9954545454545455,
+  "classes_count": 22,
+  "unsupported_crops": [
+    "wheat",
+    "mustard",
+    "soybean",
+    "sugarcane",
+    "potato",
+    "onion",
+    "groundnut",
+    "barley",
+    "bajra",
+    "jowar",
+    "garlic",
+    "ginger"
+  ],
+  "duplicate_check": {
+    "exact_duplicates": 0,
+    "feature_only_duplicates": 0,
+    "status": "PASSED"
+  },
+  "cross_validation_5fold": {
+    "mean_accuracy": 0.9955,
+    "std_accuracy": 0.0029,
+    "mean_macro_f1": 0.9954,
+    "std_macro_f1": 0.0029,
+    "folds": [
+      {
+        "fold": 1,
+        "accuracy": 0.9932,
+        "macro_f1": 0.9932
+      },
+      {
+        "fold": 2,
+        "accuracy": 0.9932,
+        "macro_f1": 0.9932
+      },
+      {
+        "fold": 3,
+        "accuracy": 1.0,
+        "macro_f1": 1.0
+      },
+      {
+        "fold": 4,
+        "accuracy": 0.9977,
+        "macro_f1": 0.9977
+      },
+      {
+        "fold": 5,
+        "accuracy": 0.9932,
+        "macro_f1": 0.9932
+      }
+    ]
+  },
+  "test_metrics": {
+    "accuracy": 0.9932,
+    "macro_f1": 0.9932,
+    "weighted_precision": 0.9935,
+    "weighted_recall": 0.9932
+  },
   "confusion_matrix": [
     [
       20,
@@ -292,10 +350,10 @@
       0,
       0,
       0,
-      20,
+      19,
       0,
       0,
-      0,
+      1,
       0,
       0,
       0,

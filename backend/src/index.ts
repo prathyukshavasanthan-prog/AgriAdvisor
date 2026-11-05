@@ -6,10 +6,12 @@ import authRoutes from './routes/authRoutes.js';
 import farmRoutes, { getFarmIrrigationRecommendation, handleGetCropLifecycle } from './routes/farmRoutes.js';
 import marketRoutes from './routes/marketRoutes.js';
 import outbreakRoutes from './routes/outbreakRoutes.js';
+import assistantRoutes from './routes/assistantRoutes.js';
 import { authenticateToken, AuthenticatedRequest } from './middleware/authMiddleware.js';
 import { getUserHealthAlerts } from './services/cropHealthService.js';
 import { seedMarketPricesIfEmpty } from './services/marketService.js';
 import { migrateExistingFarmLocations } from './services/outbreakService.js';
+import { migrateExistingFarmsPhase1 } from './models/Farm.js';
 
 dotenv.config();
 
@@ -48,6 +50,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/farms', farmRoutes);
 app.use('/api/market', marketRoutes);
 app.use('/api/outbreaks', outbreakRoutes);
+app.use('/api/assistant', assistantRoutes);
 
 // Crop Lifecycle direct endpoint (Module 6)
 app.get('/api/crops/:cropId/lifecycle', authenticateToken, handleGetCropLifecycle);
@@ -88,6 +91,10 @@ const startServer = async () => {
   const migration = await migrateExistingFarmLocations();
   if (migration.migratedCount > 0) {
     console.log(`[Migration] Migrated ${migration.migratedCount} farms to GeoJSON Point location.`);
+  }
+  const phase1Migration = await migrateExistingFarmsPhase1();
+  if (phase1Migration.migratedCount > 0) {
+    console.log(`[Migration] Migrated ${phase1Migration.migratedCount} farms with Phase 1 defaults (land_type, water_source, irrigation_method, size_unit, awhc).`);
   }
   app.listen(PORT, () => {
     console.log(`[Server] AgriAdvisor Backend running on port ${PORT}`);

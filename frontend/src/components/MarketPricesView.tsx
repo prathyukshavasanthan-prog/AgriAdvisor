@@ -162,7 +162,7 @@ export const MarketPricesView: React.FC<MarketPricesViewProps> = ({ farms }) => 
               {hoveredPoint.date}: ₹{hoveredPoint.price.toLocaleString()}
             </span>
           ) : (
-            <span className="text-[11px] text-stone-400">14 Days</span>
+            <span className="text-[11px] text-stone-400">{t('market_14_days', '14 Days')}</span>
           )}
         </div>
 
@@ -296,7 +296,7 @@ export const MarketPricesView: React.FC<MarketPricesViewProps> = ({ farms }) => 
           <h1 className="text-xl sm:text-2xl font-black text-[#14251B] mt-1 tracking-tight">
             {t('market_prices_title')}
           </h1>
-          <p className="text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl">
+          <p className="hidden sm:block text-xs sm:text-sm text-stone-600 mt-1 max-w-2xl">
             {t('market_prices_sub')}
           </p>
         </div>
@@ -308,7 +308,7 @@ export const MarketPricesView: React.FC<MarketPricesViewProps> = ({ farms }) => 
           className="h-10 px-4 rounded-xl bg-white border border-stone-300 hover:border-[#1E4620] text-stone-700 font-bold text-xs flex items-center gap-2 hover:bg-stone-50 transition-colors shadow-xs self-start md:self-auto"
         >
           <RefreshCw className={`w-3.5 h-3.5 text-stone-500 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh Rates</span>
+          <span>{t('market_refresh_rates', 'Refresh Rates')}</span>
         </button>
       </div>
 
@@ -320,7 +320,7 @@ export const MarketPricesView: React.FC<MarketPricesViewProps> = ({ farms }) => 
         <div className="text-xs sm:text-sm text-stone-700 leading-relaxed font-medium">
           <div className="font-bold text-[#14251B] mb-0.5 flex items-center gap-1.5">
             <Building2 className="w-4 h-4 text-[#1E4620]" />
-            <span>Ministry of Agriculture & Farmers Welfare — Agmarknet Data</span>
+            <span>{t('agmarknet_source_label', 'Ministry of Agriculture & Farmers Welfare — Agmarknet Data')}</span>
           </div>
           <p className="text-stone-600">
             {t('market_source_disclaimer')}
@@ -363,7 +363,7 @@ export const MarketPricesView: React.FC<MarketPricesViewProps> = ({ farms }) => 
       {loading && Object.keys(marketData).length === 0 ? (
         <div className="bg-white border border-[#D8D5C5] rounded-3xl p-12 text-center text-stone-500 flex flex-col items-center justify-center gap-3">
           <div className="w-8 h-8 border-3 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-          <span className="text-sm font-semibold">Loading mandi prices & 14-day history...</span>
+          <span className="text-sm font-semibold">{t('loading_mandi_prices', 'Loading mandi prices & 14-day history...')}</span>
         </div>
       ) : error ? (
         <div className="bg-white border border-rose-200 rounded-3xl p-6 text-center space-y-3">

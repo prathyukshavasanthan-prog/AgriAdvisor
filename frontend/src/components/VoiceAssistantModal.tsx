@@ -296,7 +296,7 @@ export const VoiceAssistantModal: React.FC<VoiceAssistantModalProps> = ({
         {loadingAnswer && (
           <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200 text-center text-xs text-stone-500 flex items-center justify-center gap-2">
             <div className="w-4 h-4 border-2 border-[#1E4620] border-t-transparent rounded-full animate-spin" />
-            <span>Formulating agronomic advisory...</span>
+            <span>{t('voice_formulating_advisory', 'Formulating agronomic advisory...')}</span>
           </div>
         )}
 
